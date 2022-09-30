@@ -8,11 +8,70 @@ class MovieListWidget extends StatelessWidget {
 
   late MovieProvider _movieProvider;
 
+  Widget _makeMovieOne(Movie movie) {
+    return Row(
+      children: [
+        // ClipRRect 이걸 왜해주나요
+        // makeListView에서 Container에서 BoxDecoration으로 둥글게 만들어도 실제영역이 줄어든게 아니라 그렇게 보이는거기 때문
+        // 포스터의 보이는 영역도 줄여줘야 좌우가 똑같아진다
+        ClipRRect(
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+            child: Image.network(movie.posterUrl)),
+        Expanded(
+            child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                movie.originalTitle,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: Text(
+                  movie.overview,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 8,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              )
+            ],
+          ),
+        ))
+      ],
+    );
+  }
+
   Widget _makeListView(List<Movie> movies) {
     return ListView.separated(
         itemBuilder: (context, index) {
-          return Center(
-            child: Text(movies[index].originalTitle),
+          // return Center(
+          //   child: Text(movies[index].originalTitle),
+          // );
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              height: 200,
+              //Container에 Colors 넣으면 에러
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 3,
+                      blurRadius: 3,
+                      offset: const Offset(0, 0),
+                    )
+                  ]),
+              child: _makeMovieOne(movies[index]),
+            ),
           );
         },
         separatorBuilder: (context, index) {

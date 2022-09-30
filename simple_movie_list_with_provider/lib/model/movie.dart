@@ -23,4 +23,6 @@ class Movie {
         originalTitle: json["original_title"] as String,
         popularity: json["popularity"] as double);
   }
+
+  String get posterUrl => "https://image.tmdb.org/t/p/w500/$posterPath";
 }
