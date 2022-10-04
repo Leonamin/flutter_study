@@ -14,11 +14,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late List<Map<String, String>> datas;
+  late int _currentPageIndex;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _currentPageIndex = 0;
     datas = [
       {
         "cid": "1",
@@ -237,8 +239,40 @@ class _HomeState extends State<Home> {
         itemCount: datas.length);
   }
 
+  BottomNavigationBarItem _makeBottomNavigationBarItem(
+      String iconName, String label) {
+    return BottomNavigationBarItem(
+        icon: Padding(
+          padding: const EdgeInsets.only(bottom: 5),
+          child: SvgPicture.asset(
+            "assets/svg/${iconName}_off.svg",
+            width: 22,
+          ),
+        ),
+        label: label);
+  }
+
   Widget _makeBottomNavigator() {
-    return Container();
+    return BottomNavigationBar(
+        // 애니메이션
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          setState(() {
+            _currentPageIndex = index;
+          });
+        },
+        currentIndex: _currentPageIndex,
+        selectedItemColor: Colors.black,
+        selectedFontSize: 12,
+        unselectedItemColor: Colors.black38,
+        items: [
+          // label 안넣으면 오류남
+          _makeBottomNavigationBarItem("home", "홈"),
+          _makeBottomNavigationBarItem("notes", "동네 생활"),
+          _makeBottomNavigationBarItem("location", "내 근처"),
+          _makeBottomNavigationBarItem("chat", "채팅"),
+          _makeBottomNavigationBarItem("user", "나의 당근"),
+        ]);
   }
 
   @override
@@ -246,7 +280,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: _makeAppBar(),
       body: _makeBody(),
-      // bottomNavigationBar: _makeBottomNavigator(),
+      bottomNavigationBar: _makeBottomNavigator(),
     );
   }
 }
