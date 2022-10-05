@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -14,19 +15,25 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late List<Map<String, String>> datas;
-  late int _currentPageIndex;
+  late String currentMenuLocation;
+
+  final Map<String, String> locationTypeToString = {
+    "little_china": "리틀 차이나",
+    "kabuki": "가부키",
+    "north_side": "노스사이드"
+  };
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _currentPageIndex = 0;
+    currentMenuLocation = "little_china";
     datas = [
       {
         "cid": "1",
         "image": "assets/images/ara-1.jpg",
         "title": "네메시스 축구화275",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "30000",
         "likes": "2"
       },
@@ -34,7 +41,7 @@ class _HomeState extends State<Home> {
         "cid": "2",
         "image": "assets/images/ara-2.jpg",
         "title": "LA갈비 5kg팔아요~",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "100000",
         "likes": "5"
       },
@@ -42,7 +49,7 @@ class _HomeState extends State<Home> {
         "cid": "3",
         "image": "assets/images/ara-3.jpg",
         "title": "치약팝니다",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "5000",
         "likes": "0"
       },
@@ -50,7 +57,7 @@ class _HomeState extends State<Home> {
         "cid": "4",
         "image": "assets/images/ara-4.jpg",
         "title": "[풀박스]맥북프로16인치 터치바 스페이스그레이",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "2500000",
         "likes": "6"
       },
@@ -58,7 +65,7 @@ class _HomeState extends State<Home> {
         "cid": "5",
         "image": "assets/images/ara-5.jpg",
         "title": "디월트존기임팩",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "150000",
         "likes": "2"
       },
@@ -66,7 +73,7 @@ class _HomeState extends State<Home> {
         "cid": "6",
         "image": "assets/images/ara-6.jpg",
         "title": "갤럭시s10",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "180000",
         "likes": "2"
       },
@@ -74,7 +81,7 @@ class _HomeState extends State<Home> {
         "cid": "7",
         "image": "assets/images/ara-7.jpg",
         "title": "선반",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "15000",
         "likes": "2"
       },
@@ -82,7 +89,7 @@ class _HomeState extends State<Home> {
         "cid": "8",
         "image": "assets/images/ara-8.jpg",
         "title": "냉장 쇼케이스",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "80000",
         "likes": "3"
       },
@@ -90,7 +97,7 @@ class _HomeState extends State<Home> {
         "cid": "9",
         "image": "assets/images/ara-9.jpg",
         "title": "대우 미니냉장고",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "30000",
         "likes": "3"
       },
@@ -98,7 +105,7 @@ class _HomeState extends State<Home> {
         "cid": "10",
         "image": "assets/images/ara-10.jpg",
         "title": "멜킨스 풀업 턱걸이 판매합니다.",
-        "location": "제주 제주시 아라동",
+        "location": "나이트시티 리틀 차이나",
         "price": "50000",
         "likes": "7"
       },
@@ -112,16 +119,46 @@ class _HomeState extends State<Home> {
         onTap: () {
           print("C");
         },
-        child: Row(
-          children: const [
-            Text(
-              '아라동',
-              style: TextStyle(color: Colors.black),
-            ),
-            Icon(
-              Icons.arrow_drop_down,
-            )
-          ],
+        // int string 상관 무
+        child: PopupMenuButton<String>(
+          //팝업시 메뉴 위치
+          offset: const Offset(0.0, 30.0),
+          shape: ShapeBorder.lerp(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              1),
+          onSelected: (value) {
+            setState(() {
+              currentMenuLocation = value;
+            });
+          },
+          itemBuilder: (context) {
+            return [
+              const PopupMenuItem(
+                child: Text("리틀 차이나"),
+                value: "little_china",
+              ),
+              PopupMenuItem(
+                child: Text("가부키"),
+                value: "kabuki",
+              ),
+              PopupMenuItem(
+                child: Text("노스 사이드"),
+                value: "north_side",
+              ),
+            ];
+          },
+          child: Row(
+            children: [
+              Text(
+                locationTypeToString[currentMenuLocation]!,
+                style: TextStyle(color: Colors.black),
+              ),
+              Icon(
+                Icons.arrow_drop_down,
+              )
+            ],
+          ),
         ),
       ),
       // 그림자 생성 1로 하면 그림자 최저로 줄어듦(없어짐)
@@ -249,30 +286,14 @@ class _HomeState extends State<Home> {
             width: 22,
           ),
         ),
+        activeIcon: Padding(
+          padding: const EdgeInsets.only(bottom: 5),
+          child: SvgPicture.asset(
+            "assets/svg/${iconName}_on.svg",
+            width: 22,
+          ),
+        ),
         label: label);
-  }
-
-  Widget _makeBottomNavigator() {
-    return BottomNavigationBar(
-        // 애니메이션
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) {
-          setState(() {
-            _currentPageIndex = index;
-          });
-        },
-        currentIndex: _currentPageIndex,
-        selectedItemColor: Colors.black,
-        selectedFontSize: 12,
-        unselectedItemColor: Colors.black38,
-        items: [
-          // label 안넣으면 오류남
-          _makeBottomNavigationBarItem("home", "홈"),
-          _makeBottomNavigationBarItem("notes", "동네 생활"),
-          _makeBottomNavigationBarItem("location", "내 근처"),
-          _makeBottomNavigationBarItem("chat", "채팅"),
-          _makeBottomNavigationBarItem("user", "나의 당근"),
-        ]);
   }
 
   @override
@@ -280,7 +301,6 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: _makeAppBar(),
       body: _makeBody(),
-      bottomNavigationBar: _makeBottomNavigator(),
     );
   }
 }

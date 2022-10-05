@@ -1,3 +1,4 @@
+import 'package:carrot_market/page/app.dart';
 import 'package:carrot_market/page/home.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         // white를 쓰고 싶으면 커스텀으로 white를 추가해야하는데 귀찮으니 그냥 한다.
         primarySwatch: primaryWhite,
       ),
-      home: const Home(),
+      home: const App(),
     );
   }
 }
