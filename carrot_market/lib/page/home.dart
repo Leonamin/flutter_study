@@ -1,9 +1,9 @@
 import 'dart:html';
 import 'dart:ui';
 
+import 'package:carrot_market/repository/contents_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/parser.dart';
 import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
@@ -14,8 +14,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late List<Map<String, String>> datas;
   late String currentMenuLocation;
+  late ContentsRepository _contentsRepository;
 
   final Map<String, String> locationTypeToString = {
     "little_china": "리틀 차이나",
@@ -28,88 +28,7 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
     currentMenuLocation = "little_china";
-    datas = [
-      {
-        "cid": "1",
-        "image": "assets/images/ara-1.jpg",
-        "title": "네메시스 축구화275",
-        "location": "나이트시티 리틀 차이나",
-        "price": "30000",
-        "likes": "2"
-      },
-      {
-        "cid": "2",
-        "image": "assets/images/ara-2.jpg",
-        "title": "LA갈비 5kg팔아요~",
-        "location": "나이트시티 리틀 차이나",
-        "price": "100000",
-        "likes": "5"
-      },
-      {
-        "cid": "3",
-        "image": "assets/images/ara-3.jpg",
-        "title": "치약팝니다",
-        "location": "나이트시티 리틀 차이나",
-        "price": "5000",
-        "likes": "0"
-      },
-      {
-        "cid": "4",
-        "image": "assets/images/ara-4.jpg",
-        "title": "[풀박스]맥북프로16인치 터치바 스페이스그레이",
-        "location": "나이트시티 리틀 차이나",
-        "price": "2500000",
-        "likes": "6"
-      },
-      {
-        "cid": "5",
-        "image": "assets/images/ara-5.jpg",
-        "title": "디월트존기임팩",
-        "location": "나이트시티 리틀 차이나",
-        "price": "150000",
-        "likes": "2"
-      },
-      {
-        "cid": "6",
-        "image": "assets/images/ara-6.jpg",
-        "title": "갤럭시s10",
-        "location": "나이트시티 리틀 차이나",
-        "price": "180000",
-        "likes": "2"
-      },
-      {
-        "cid": "7",
-        "image": "assets/images/ara-7.jpg",
-        "title": "선반",
-        "location": "나이트시티 리틀 차이나",
-        "price": "15000",
-        "likes": "2"
-      },
-      {
-        "cid": "8",
-        "image": "assets/images/ara-8.jpg",
-        "title": "냉장 쇼케이스",
-        "location": "나이트시티 리틀 차이나",
-        "price": "80000",
-        "likes": "3"
-      },
-      {
-        "cid": "9",
-        "image": "assets/images/ara-9.jpg",
-        "title": "대우 미니냉장고",
-        "location": "나이트시티 리틀 차이나",
-        "price": "30000",
-        "likes": "3"
-      },
-      {
-        "cid": "10",
-        "image": "assets/images/ara-10.jpg",
-        "title": "멜킨스 풀업 턱걸이 판매합니다.",
-        "location": "나이트시티 리틀 차이나",
-        "price": "50000",
-        "likes": "7"
-      },
-    ];
+    _contentsRepository = ContentsRepository();
   }
 
   AppBar _makeAppBar() {
@@ -189,10 +108,15 @@ class _HomeState extends State<Home> {
 
   final oCcy = NumberFormat("#,###", "ko_KR");
   String calcStringToWon(String priceString) {
+    if (priceString == "무료나눔") return priceString;
     return "${oCcy.format(int.parse(priceString))}원";
   }
 
-  Widget _makeBody() {
+  _loadContents() {
+    return _contentsRepository.loadContentsFromLocation(currentMenuLocation);
+  }
+
+  Widget _makeDataList(datas) {
     return ListView.separated(
         // ListView의 전체 이므로 옆의 간격을 통합해서 띄우기 쉽다
         // itemBuilder에서 간격을 주면 seperaorBuilder에서 또 따로 간격을 줘야하는 번거로움과 복잡함이 있다.
@@ -206,7 +130,7 @@ class _HomeState extends State<Home> {
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                   // scale을 주거나 width height로 고정
                   child: Image.asset(
-                    datas[index]["image"]!,
+                    datas![index]["image"]!,
                     width: 100,
                   ),
                 ),
@@ -273,7 +197,37 @@ class _HomeState extends State<Home> {
             thickness: 0.5,
           );
         },
-        itemCount: datas.length);
+        itemCount: datas!.length);
+  }
+
+  Widget _makeBody() {
+    return FutureBuilder(
+      future: _loadContents(),
+      builder: (context, snapshot) {
+        List<Map<String, String>>? datas =
+            snapshot.data as List<Map<String, String>>?;
+        if (snapshot.connectionState != ConnectionState.done) {
+          // primarySwatch가 white라서 로딩이 안나옴
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.blue),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("데이터 오류"),
+          );
+        }
+
+        if (snapshot.hasData) {
+          return _makeDataList(datas);
+        }
+
+        return Center(
+          child: Text("데이터 업성"),
+        );
+      },
+    );
   }
 
   BottomNavigationBarItem _makeBottomNavigationBarItem(
