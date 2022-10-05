@@ -167,7 +167,7 @@ class ContentsRepository {
     "north_side": null
   };
 
-  // 이거를 dynamic으로 안하고 하는법은?
+  //TODO 이거를 dynamic으로 안하고 하는법은?
   // Future<List<Map<String, String>>>? loadContentsFromLocation(
   Future<dynamic>? loadContentsFromLocation(String location) async {
     //API 통신 location값을 보내준다

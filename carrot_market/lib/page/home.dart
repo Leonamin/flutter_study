@@ -204,8 +204,7 @@ class _HomeState extends State<Home> {
     return FutureBuilder(
       future: _loadContents(),
       builder: (context, snapshot) {
-        List<Map<String, String>>? datas =
-            snapshot.data as List<Map<String, String>>?;
+        // Future가 끝나지 않으면 여기로 처리됨
         if (snapshot.connectionState != ConnectionState.done) {
           // primarySwatch가 white라서 로딩이 안나옴
           return const Center(
@@ -220,6 +219,11 @@ class _HomeState extends State<Home> {
         }
 
         if (snapshot.hasData) {
+          // hasData 조건이 data != null이기 때문에 null로 오게 해야함
+          // Empty List로 오면 형변환 실패가 발생한다!
+          // 애당초 hasData가 true여야 data가 의미가 있으므로 여기서 처리하는게 좋다고 생각
+          List<Map<String, String>>? datas =
+              snapshot.data as List<Map<String, String>>?;
           return _makeDataList(datas);
         }
 
