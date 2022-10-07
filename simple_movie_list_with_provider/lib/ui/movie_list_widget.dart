@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_movie_list_with_provider/detail_content_view.dart';
 import 'package:simple_movie_list_with_provider/model/movie.dart';
+import 'package:simple_movie_list_with_provider/model/movie_detail.dart';
 import 'package:simple_movie_list_with_provider/provider/movie_provider.dart';
 
 class MovieListWidget extends StatelessWidget {
@@ -8,7 +10,7 @@ class MovieListWidget extends StatelessWidget {
 
   late MovieProvider _movieProvider;
 
-  Widget _makeMovieOne(Movie movie) {
+  Widget _makeMovieOne(MovieDetail movie) {
     return Row(
       children: [
         // ClipRRect 이걸 왜해주나요
@@ -17,7 +19,7 @@ class MovieListWidget extends StatelessWidget {
         ClipRRect(
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-            child: Image.network(movie.posterUrl)),
+            child: Hero(tag: movie.cid, child: Image.network(movie.posterUrl))),
         Expanded(
             child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -48,29 +50,38 @@ class MovieListWidget extends StatelessWidget {
     );
   }
 
-  Widget _makeListView(List<Movie> movies) {
+  Widget _makeListView(List<MovieDetail> movies) {
     return ListView.separated(
         itemBuilder: (context, index) {
           // return Center(
           //   child: Text(movies[index].originalTitle),
           // );
-          return Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              height: 200,
-              //Container에 Colors 넣으면 에러
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 3,
-                      blurRadius: 3,
-                      offset: const Offset(0, 0),
-                    )
-                  ]),
-              child: _makeMovieOne(movies[index]),
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) {
+                  return DetailContentView(data: movies[index]);
+                },
+              ));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                height: 200,
+                //Container에 Colors 넣으면 에러
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 3,
+                        blurRadius: 3,
+                        offset: const Offset(0, 0),
+                      )
+                    ]),
+                child: _makeMovieOne(movies[index]),
+              ),
             ),
           );
         },

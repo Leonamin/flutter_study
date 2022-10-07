@@ -1,11 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:simple_movie_list_with_provider/model/movie.dart';
+import 'package:simple_movie_list_with_provider/model/movie_detail.dart';
 import 'package:simple_movie_list_with_provider/repository/movie_repository.dart';
 
 class MovieProvider extends ChangeNotifier {
   MovieRepository _movieRepository = MovieRepository();
-  List<Movie> _movies = [];
-  List<Movie> get movies => _movies;
+  List<MovieDetail> _movies = [];
+  List<MovieDetail> get movies => _movies;
 
   /*
   provider
@@ -21,7 +22,17 @@ class MovieProvider extends ChangeNotifier {
     List<Movie> listMovies = await _movieRepository.loadMovies();
     //listMovies 예외처리
     // 가공
-    _movies = listMovies;
+    List<MovieDetail> _movieDetails = [];
+
+    for (int i = 0; i < listMovies.length; i++) {
+      _movieDetails.add(MovieDetail(
+          overview: listMovies[i].overview,
+          posterPath: listMovies[i].posterPath,
+          originalTitle: listMovies[i].originalTitle,
+          popularity: listMovies[i].popularity,
+          cid: "$i"));
+    }
+    _movies = _movieDetails;
     notifyListeners();
   }
 }
