@@ -37,6 +37,8 @@ dependencies:
   flutter_svg: ^1.1.5
   # 국가별 단위 지정 라이브러리
   intl: ^0.17.0
+  # 위젯 전환 모음 라이브러리
+  carousel_slider: ^4.1.1
 
 dev_dependencies:
   flutter_test:
