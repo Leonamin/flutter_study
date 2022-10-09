@@ -153,11 +153,129 @@ class _DetailContentViewState extends State<DetailContentView> {
     );
   }
 
-  Widget _makeBody() {
+  Widget _line() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      height: 1,
+      color: Colors.grey.withOpacity(0.3),
+    );
+  }
+
+  Widget _contentDetail() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const SizedBox(
+          height: 20,
+        ),
+        Text(
+          widget.data["title"]!,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        Text(
+          "분류 * 시간",
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Text(
+          "내용",
+          style: const TextStyle(height: 1.5, fontSize: 15),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Text(
+          "채팅 관심 조회",
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+      ]),
+    );
+  }
+
+  Widget _makeOtherCellContents() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "판매자님의 판매 상품",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          Text(
+            "모두 보기",
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cellContent() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _makeSliderImage(),
-        _sellerSimpleInfo(),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            height: 120,
+            color: Colors.grey,
+            // child: Image.asset(
+            //   "assets/images/user.png",)
+          ),
+        ),
+        Text(
+          "상품",
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        Text(
+          "가격",
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+      ],
+    );
+  }
+
+  Widget _makeBody() {
+    // return SingleChildScrollView(
+    //   child: Column(
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     children: [
+    //       _makeSliderImage(),
+    //       _sellerSimpleInfo(),
+    //       _line(),
+    //       _contentDetail(),
+    //       _line(),
+    //       _makeOtherCellContents(),
+    //     ],
+    //   ),
+    // );
+    return CustomScrollView(
+      slivers: [
+        SliverList(
+            delegate: SliverChildListDelegate([
+          _makeSliderImage(),
+          _sellerSimpleInfo(),
+          _line(),
+          _contentDetail(),
+          _line(),
+          _makeOtherCellContents(),
+        ])),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10),
+            delegate: SliverChildListDelegate(List.generate(20, (index) {
+              return _cellContent();
+            }).toList()),
+          ),
+        ),
       ],
     );
   }
