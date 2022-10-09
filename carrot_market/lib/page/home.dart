@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:carrot_market/page/detail_content_view.dart';
 import 'package:carrot_market/repository/contents_repository.dart';
+import 'package:carrot_market/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -107,12 +108,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  final oCcy = NumberFormat("#,###", "ko_KR");
-  String calcStringToWon(String priceString) {
-    if (priceString == "무료나눔") return priceString;
-    return "${oCcy.format(int.parse(priceString))}원";
-  }
-
   _loadContents() {
     return _contentsRepository.loadContentsFromLocation(currentMenuLocation);
   }
@@ -172,7 +167,7 @@ class _HomeState extends State<Home> {
                                 overflow: TextOverflow.ellipsis),
                           ),
                           Text(
-                            calcStringToWon(datas[index]["price"]!),
+                            DataUtils.calcStringToWon(datas[index]["price"]!),
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,

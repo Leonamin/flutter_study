@@ -14,13 +14,43 @@ class DetailContentView extends StatefulWidget {
   State<DetailContentView> createState() => _DetailContentViewState();
 }
 
-class _DetailContentViewState extends State<DetailContentView> {
+class _DetailContentViewState extends State<DetailContentView>
+    with SingleTickerProviderStateMixin {
   late Size deviceSize;
   int _current = 0;
   final CarouselController _controller = CarouselController();
   late List<String> imgPathList;
+
+  // 기능 좋아요 변수
   bool _subscribeSelectedState = false;
   bool _subscribeHoveringState = false;
+
+  // 기능 앱바 스크롤 색상전환 변수
+  double scrollPostionToAlpha = 0;
+  final ScrollController _bodyScrollController = ScrollController();
+  late AnimationController _animationController;
+  late Animation _colorTween;
+
+  @override
+  void initState() {
+    super.initState();
+
+    //기능 앱바 스크롤 색상전환 애니메이션 등록
+    _animationController = AnimationController(vsync: this);
+    _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
+        .animate(_animationController);
+    //기능 앱바 스크롤 색상전환 리스너 등록
+    _bodyScrollController.addListener(() {
+      setState(() {
+        if (_bodyScrollController.offset > 255) {
+          scrollPostionToAlpha = 255;
+        } else {
+          scrollPostionToAlpha = _bodyScrollController.offset;
+        }
+        _animationController.value = scrollPostionToAlpha / 255;
+      });
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -36,33 +66,30 @@ class _DetailContentViewState extends State<DetailContentView> {
     ];
   }
 
+  //기능 앱바 스크롤 색상 전환 아이콘 버튼 색변환 애니메이션 적용
+  Widget _makeAnimatedIcon(IconData iconData) {
+    return AnimatedBuilder(
+        animation: _colorTween,
+        builder: (context, child) => Icon(
+              iconData,
+              color: _colorTween.value,
+            ));
+  }
+
   // return Type이 Widget이면 PreferredSizeWidget이 필요하다고 나옴
   AppBar _makeAppBarWidget() {
     return AppBar(
-      // 투명 처리
-      backgroundColor: Colors.transparent,
+      // 기능 앱바 스크롤 색상전환 배경색 변환 적용
+      backgroundColor: Colors.white.withAlpha(scrollPostionToAlpha.toInt()),
       elevation: 0,
       leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          )),
+          icon: _makeAnimatedIcon(Icons.arrow_back)),
       actions: [
-        IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.share,
-              color: Colors.white,
-            )),
-        IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            )),
+        IconButton(onPressed: () {}, icon: _makeAnimatedIcon(Icons.share)),
+        IconButton(onPressed: () {}, icon: _makeAnimatedIcon(Icons.more_vert)),
       ],
     );
   }
@@ -262,6 +289,8 @@ class _DetailContentViewState extends State<DetailContentView> {
     //   ),
     // );
     return CustomScrollView(
+      // 기능 앱바 스크롤 색상전환 컨트롤러 설정
+      controller: _bodyScrollController,
       slivers: [
         SliverList(
             delegate: SliverChildListDelegate([
