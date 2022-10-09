@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carrot_market/components/manor_temperature_widget.dart';
 import 'package:flutter/material.dart';
 
 class DetailContentView extends StatefulWidget {
@@ -60,7 +61,7 @@ class _DetailContentViewState extends State<DetailContentView> {
     );
   }
 
-  Widget _makeBody() {
+  Widget _makeSliderImage() {
     return Container(
         child: Stack(
       children: [
@@ -116,6 +117,49 @@ class _DetailContentViewState extends State<DetailContentView> {
         )
       ],
     ));
+  }
+
+  Widget _sellerSimpleInfo() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 25,
+            backgroundImage: Image.asset(
+              "assets/images/user.png",
+            ).image,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                "양",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              Text(
+                "컨테이너",
+              )
+            ],
+          ),
+          // 요렇게 줘도 옆으로 몰리고 아래 매너 온도 위젯을 Expanded로 감싸서 CrossExisAlignment.end로 해도 된다
+          Expanded(child: Container()),
+          ManorTemperatureWidget(manorTemp: 37.5)
+        ],
+      ),
+    );
+  }
+
+  Widget _makeBody() {
+    return Column(
+      children: [
+        _makeSliderImage(),
+        _sellerSimpleInfo(),
+      ],
+    );
   }
 
   Widget _makeBottomBarWidget() {
