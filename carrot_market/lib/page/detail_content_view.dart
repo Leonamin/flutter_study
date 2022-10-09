@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carrot_market/components/manor_temperature_widget.dart';
+import 'package:carrot_market/utils/data_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class DetailContentView extends StatefulWidget {
   Map<String, String> data;
@@ -282,9 +286,65 @@ class _DetailContentViewState extends State<DetailContentView> {
 
   Widget _makeBottomBarWidget() {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       width: deviceSize.width,
       height: 55,
-      color: Colors.red,
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              print("관심 상품 이벤트");
+            },
+            child: SvgPicture.asset(
+              "assets/svg/heart_off.svg",
+              width: 20,
+              height: 20,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 15, right: 15),
+            width: 1,
+            height: 40,
+            color: Colors.grey.withOpacity(0.3),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                DataUtils.calcStringToWon(widget.data["price"]!),
+                style:
+                    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "가격 제안",
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+          ),
+          Expanded(
+              // 여기를 Row로 감싸면 내부 위젯 크기만큼만 사용한다.
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                // color: const Color(0xFFF08F4F), decoration 사용시 color는 decoration에 사용
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: const Color(0xFFF08F4F)),
+                child: const Text(
+                  "채팅으로 거래하기",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ))
+        ],
+      ),
     );
   }
 
