@@ -19,6 +19,8 @@ class _DetailContentViewState extends State<DetailContentView> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
   late List<String> imgPathList;
+  bool _subscribeSelectedState = false;
+  bool _subscribeHoveringState = false;
 
   @override
   void didChangeDependencies() {
@@ -291,12 +293,25 @@ class _DetailContentViewState extends State<DetailContentView> {
       height: 55,
       child: Row(
         children: [
-          GestureDetector(
+          InkWell(
+            // 나름 구독 상태 확인 만든거
+            // 문제점
+            // 1. 서버상태를 불러오는거는 뭐 알아서
+            // 2. 탭, 호버 상태 관리를 위해 변수 2개나 쓴다!
             onTap: () {
-              print("관심 상품 이벤트");
+              setState(() {
+                _subscribeSelectedState = !_subscribeSelectedState;
+              });
+            },
+            onHover: (value) {
+              setState(() {
+                _subscribeHoveringState = value;
+              });
             },
             child: SvgPicture.asset(
-              "assets/svg/heart_off.svg",
+              _subscribeSelectedState ^ _subscribeHoveringState
+                  ? "assets/svg/heart_on.svg"
+                  : "assets/svg/heart_off.svg",
               width: 20,
               height: 20,
             ),
