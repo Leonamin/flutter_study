@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carrot_market/components/manor_temperature_widget.dart';
 import 'package:carrot_market/utils/data_utils.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -332,6 +329,11 @@ class _DetailContentViewState extends State<DetailContentView>
               setState(() {
                 _subscribeSelectedState = !_subscribeSelectedState;
               });
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content:
+                    Text(_subscribeSelectedState ? "관심 목록 추가" : "관심 목록 삭제"),
+                duration: const Duration(milliseconds: 1000),
+              ));
             },
             onHover: (value) {
               setState(() {
