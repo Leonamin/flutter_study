@@ -181,21 +181,47 @@ class ContentsRepository extends LocalStorageRepository {
     return data[location];
   }
 
-  Future<void> addMyFavoriteContent(Map<String, String> content) async {
-    storeValue(MY_FAVORITE_STORE_KEY, jsonEncode(content));
-  }
-
-  Future<bool> isMyFavoriteContent(String cid) async {
+  Future<List> loadFavoriteContent() async {
     String? jsonData = await getStoredValue(MY_FAVORITE_STORE_KEY);
+    print(jsonData);
+
     if (jsonData != null) {
-      Map<String, dynamic> json = jsonDecode(jsonData);
-      return cid == json["cid"];
+      return jsonDecode(jsonData);
     } else {
-      return false;
+      return [];
     }
   }
 
-  Future<void> deleteMyFavoriteContent(Map<String, String> data) async {
-    deleteStoredValue(MY_FAVORITE_STORE_KEY);
+  void updateFavoriteContents(List favoriteContentsList) async {
+    storeValue(MY_FAVORITE_STORE_KEY, jsonEncode(favoriteContentsList));
+  }
+
+  Future<void> addMyFavoriteContent(Map<String, String> content) async {
+    List<dynamic> favoriteContentsList = await loadFavoriteContent();
+
+    favoriteContentsList.add(content);
+    updateFavoriteContents(favoriteContentsList);
+  }
+
+  Future<bool> isMyFavoriteContent(final String cid) async {
+    List<dynamic> favoriteContentsList = await loadFavoriteContent();
+    bool isMyFavoriteContent = false;
+    for (dynamic data in favoriteContentsList) {
+      if (cid == data["cid"]) {
+        isMyFavoriteContent = true;
+        break;
+      }
+    }
+    return isMyFavoriteContent;
+  }
+
+  Future<void> deleteMyFavoriteContent(Map<String, String> content) async {
+    // 백업
+    List<dynamic> favoriteContentsList = await loadFavoriteContent();
+
+    // 백업에서 지정 데이터 삭제
+    favoriteContentsList.removeWhere((data) => data["cid"] == content["cid"]);
+
+    updateFavoriteContents(favoriteContentsList);
   }
 }
