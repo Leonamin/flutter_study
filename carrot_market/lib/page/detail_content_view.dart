@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carrot_market/components/manor_temperature_widget.dart';
+import 'package:carrot_market/repository/contents_repository.dart';
 import 'package:carrot_market/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,9 +30,14 @@ class _DetailContentViewState extends State<DetailContentView>
   late AnimationController _animationController;
   late Animation _colorTween;
 
+  // 기능 로컬 스토리지 변수
+  late ContentsRepository _contentsRepository;
+
   @override
   void initState() {
     super.initState();
+    // 기능 로컬 스토리지 초기화
+    _contentsRepository = ContentsRepository();
 
     //기능 앱바 스크롤 색상전환 애니메이션 등록
     _animationController = AnimationController(vsync: this);
@@ -47,6 +53,19 @@ class _DetailContentViewState extends State<DetailContentView>
         }
         _animationController.value = scrollPostionToAlpha / 255;
       });
+    });
+    // 기능 로컬 스토리지 저장된 데이터 값 불러온 후 _subscribeSelectedState 설정
+    _loadMyFavoriteContentState();
+  }
+
+  _loadMyFavoriteContentState() async {
+    bool temp =
+        await _contentsRepository.isMyFavoriteContent(widget.data["cid"]!);
+    setState(() {
+      // TODO 비동기 방식이기 때문에 initState: false -> UI 생성 false -> 비동기 로딩 true -> UI 변경 true 이렇게 변한다
+      // 초기화 안하면 잠깐 에러 발생한 후 UI 생성된다.
+      // 물론 실제로는 Repository에서 불러오는 상태와 UI 생성 상태가 분리되야하기 때문에 그때 이미 로드된 데이터를 불러오게 하면 문제 없을것이다.
+      _subscribeSelectedState = temp;
     });
   }
 
@@ -326,6 +345,10 @@ class _DetailContentViewState extends State<DetailContentView>
             // 1. 서버상태를 불러오는거는 뭐 알아서
             // 2. 탭, 호버 상태 관리를 위해 변수 2개나 쓴다!
             onTap: () {
+              // 기능 로컬 스토리지 false -> save data -> true -> delete data -> false
+              !_subscribeSelectedState
+                  ? _contentsRepository.addMyFavoriteContent(widget.data)
+                  : _contentsRepository.deleteMyFavoriteContent(widget.data);
               setState(() {
                 _subscribeSelectedState = !_subscribeSelectedState;
               });

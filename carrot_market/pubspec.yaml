@@ -39,6 +39,10 @@ dependencies:
   intl: ^0.17.0
   # 위젯 전환 모음 라이브러리
   carousel_slider: ^4.1.1
+  # 플러터 로컬 스토리지 라이브러리
+  # Android minSdkVersion >= 18
+  # 웹에서는 동작 안함
+  flutter_secure_storage: ^6.0.0
 
 dev_dependencies:
   flutter_test:
