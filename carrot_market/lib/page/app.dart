@@ -14,7 +14,6 @@ class _AppState extends State<App> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _currentPageIndex = 0;
   }
@@ -57,7 +56,6 @@ class _AppState extends State<App> {
         // 애니메이션
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
-          print(index);
           setState(() {
             _currentPageIndex = index;
           });

@@ -1,5 +1,4 @@
 import 'package:carrot_market/page/app.dart';
-import 'package:carrot_market/page/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {

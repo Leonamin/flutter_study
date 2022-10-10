@@ -1,12 +1,8 @@
-import 'dart:html';
-import 'dart:ui';
-
 import 'package:carrot_market/page/detail_content_view.dart';
 import 'package:carrot_market/repository/contents_repository.dart';
 import 'package:carrot_market/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
