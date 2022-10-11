@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "892948304434",
+    "project_id": "test-sns-login-d401e",
+    "storage_bucket": "test-sns-login-d401e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892948304434:android:53c23a5584a963cf9f222b",
+        "android_client_info": {
+          "package_name": "com.leonamin.cuteshrew.flutter_firebase_authentication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892948304434-8vnr3lk2nu7pkhanjj2fv4ltrgvabpq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leonamin.cuteshrew.flutter_firebase_authentication",
+            "certificate_hash": "3de97244089d97dbb949abd8482f53c4fd40698d"
+          }
+        },
+        {
+          "client_id": "892948304434-skis49bvl7lrhlqdm5i93r2ackp0v8vc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvVWfkkD6WWI9jNo21at1MpwwXIrqb-OE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892948304434-skis49bvl7lrhlqdm5i93r2ackp0v8vc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
