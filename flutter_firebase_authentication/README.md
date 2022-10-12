@@ -18,3 +18,10 @@ keytool -list -v -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.k
 그래서 flutterfire 명령어가 안될것이다. 환경변수 들어가서 path 설정을 해주자
 3. flutterfire configure --project=test-sns-login-d401e 실행한다.
 4. 끗
+
+### 번외. 트러블슈팅
+1. 실제 기기 업로드 에러
+- dex 64K 어쩌고가 나왔다
+    - app 모듈 아래 build.gradle에 `multiDexEnabled true` 설정
+- build failed for task ':app:mergeDebugResources'
+    - flutter clean 실행 후 pubspec.yaml 다시 로드후 해결
