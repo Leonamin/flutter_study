@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginWidget extends StatelessWidget {
@@ -34,14 +35,11 @@ class LoginWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextButton(
+          IconButton(
             onPressed: () {
               signInWithGoogle();
             },
-            child: Text("GOOGLE"),
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Colors.grey.withOpacity(0.3))),
+            icon: SvgPicture.asset("assets/svg/google.svg"),
           )
         ],
       ),
