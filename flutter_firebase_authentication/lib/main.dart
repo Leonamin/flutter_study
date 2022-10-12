@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_firebase_authentication/src/app.dart';
 import 'firebase_options.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   // https://api.flutter.dev/flutter/widgets/WidgetsFlutterBinding/ensureInitialized.html
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (kIsWeb) {
+    // initialiaze the facebook javascript SDK
+    await FacebookAuth.instance.webInitialize(
+      appId: "833106107736731",
+      cookie: true,
+      xfbml: true,
+      version: "v13.0",
+    );
+  }
   runApp(const MyApp());
 }
 
