@@ -36,3 +36,6 @@ keytool -exportcert -alias androiddebugkey -keystore "C:\Users\USERNAME\.android
 USERNAME: 유저 네임 설정하자
 PATH_TO_OPENSSL_LIBRARY: openssl 다운로드 받고 알아서 잘 경로 설치하면 된다. C바로 아래에 openssl 폴더 만들어서 거기에 넣었다.
 그리고 powershell에서는 자꾸 파이프라인 관련 에러만 나오면서 안될건데 cmd로 실행하면 바로 된다.
+### 5. 안드로이드 설정
+1. 안드로이드 문자열 리소스
+안드로이드 문자열 리소스는 values/strings.xml로 보관되지만 사용할 때에는 @string/...이므로 strings로 사용해서 안된다고 하는 실수는 범하지 말자.
