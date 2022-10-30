@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:widget_test/circle_button.dart';
 import 'package:widget_test/hide_appbar_on_scroll.dart';
 
 void main() {
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HideAppBarOnScroll(),
+      home: CircleButton(),
     );
   }
 }
