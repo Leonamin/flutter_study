@@ -29,6 +29,7 @@ class ListButton extends StatefulWidget {
     this.maxHeight,
     required this.onPressed,
     required this.propertyList,
+    this.selectedIndex,
   });
   Color? backgroundColor;
   Color? selectedColor;
@@ -36,26 +37,25 @@ class ListButton extends StatefulWidget {
   double? maxHeight;
   int itemCount;
   List<ListButtonProperties> propertyList;
+  int? selectedIndex = 0;
 
   @override
   State<ListButton> createState() => _ListButtonState();
 }
 
 class _ListButtonState extends State<ListButton> {
-  int selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: widget.propertyList
           .map((item) => CircleElevatedButton(
-                color: item.id == selectedIndex
-                    ? widget.selectedColor ?? Colors.cyan
-                    : item.color,
+                color: item.id == widget.selectedIndex
+                    ? widget.selectedColor ?? Colors.blue
+                    : Colors.grey,
                 onPressed: () {
                   setState(() {
-                    selectedIndex = item.id;
+                    widget.selectedIndex = item.id;
                   });
                   item.onPressed();
                 },

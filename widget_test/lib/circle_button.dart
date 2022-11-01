@@ -77,6 +77,7 @@ class CircleButton extends StatelessWidget {
           onPressed: () {
             print("fuck");
           },
+          selectedIndex: buttonList[0].id,
         ),
       ),
     );
