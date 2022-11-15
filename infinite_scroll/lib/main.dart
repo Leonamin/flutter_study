@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll/ajax_provider.dart';
+import 'package:infinite_scroll/provider_infinite_scroll_screen.dart';
+import 'package:provider/provider.dart';
 
-const age = 27;
-const twiceTheAge = age * 2;
 void main() {
-  // runApp(const MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ProviderInfiniteScrollScreen(),
     );
   }
 }
