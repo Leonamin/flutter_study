@@ -31,6 +31,7 @@ class AjaxProvider extends ChangeNotifier {
     cache = cache + items;
 
     loading = false;
+    print(cache);
     notifyListeners();
   }
 }

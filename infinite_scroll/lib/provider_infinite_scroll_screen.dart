@@ -12,6 +12,60 @@ class ProviderInfiniteScrollScreen extends StatefulWidget {
 
 class _ProviderInfiniteScrollScreenState
     extends State<ProviderInfiniteScrollScreen> {
+  _makeListView(AjaxProvider provider) {
+    // 로딩 중이면서 캐시가 없음
+    if (provider.loading && provider.cache.isEmpty) {
+      return const SizedBox(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // 로딩 아닌데 캐시가 없음
+    if (!provider.loading && provider.cache.isEmpty) {
+      return const SizedBox(
+        height: 50,
+        child: Center(
+          child: Text("데이따 없음"),
+        ),
+      );
+    }
+
+    return ListView.builder(
+        itemCount: provider.cache.length + 1,
+        itemBuilder: (context, index) {
+          if (index < provider.cache.length) {
+            return ListTile(
+                title: Text(
+              provider.cache[index].toString(),
+            ));
+          }
+          // return InkWell(
+          //   onTap: () {
+          //     provider.fetchItems(nextId: provider.cache.last + 1);
+          //   },
+          //   child: SizedBox(
+          //     height: 50,
+          //     child: Center(
+          //         child: provider.loading
+          //             ? const CircularProgressIndicator()
+          //             : const Text("더보기")),
+          //   ),
+          // );
+
+          if (!provider.loading) {
+            // 이게 원리가 뭘까?
+            // UI가 생성되는 시점은 스크롤로 내려서 가까워지면 생성이 되는거 같다.
+            Future.microtask(() {
+              provider.fetchItems(nextId: index);
+            });
+          }
+
+          return CircularProgressIndicator();
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -46,29 +100,7 @@ class _ProviderInfiniteScrollScreenState
         builder: (context, provider, child) {
           return Scaffold(
             appBar: AppBar(title: const Text("무한 스크롤 테스트")),
-            body: ListView.builder(
-              itemCount: provider.cache.length + 1,
-              itemBuilder: (context, index) {
-                if (context.read<AjaxProvider>().cache.length == index) {
-                  return InkWell(
-                    onTap: () {
-                      provider.fetchItems(nextId: provider.cache.last + 1);
-                    },
-                    child: SizedBox(
-                      height: 50,
-                      child: Center(
-                          child: provider.loading
-                              ? const CircularProgressIndicator()
-                              : const Text("더보기")),
-                    ),
-                  );
-                }
-                return ListTile(
-                    title: Text(
-                  provider.cache[index].toString(),
-                ));
-              },
-            ),
+            body: _makeListView(provider),
           );
         },
       ),
