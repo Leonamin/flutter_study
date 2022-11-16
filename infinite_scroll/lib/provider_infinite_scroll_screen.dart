@@ -12,6 +12,8 @@ class ProviderInfiniteScrollScreen extends StatefulWidget {
 
 class _ProviderInfiniteScrollScreenState
     extends State<ProviderInfiniteScrollScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   _makeListView(AjaxProvider provider) {
     // 로딩 중이면서 캐시가 없음
     if (provider.loading && provider.cache.isEmpty) {
@@ -33,6 +35,7 @@ class _ProviderInfiniteScrollScreenState
     }
 
     return ListView.builder(
+        controller: _scrollController,
         itemCount: provider.cache.length + 1,
         itemBuilder: (context, index) {
           if (index < provider.cache.length) {
@@ -101,6 +104,34 @@ class _ProviderInfiniteScrollScreenState
           return Scaffold(
             appBar: AppBar(title: const Text("무한 스크롤 테스트")),
             body: _makeListView(provider),
+            floatingActionButton: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                    child: const Icon(Icons.arrow_upward),
+                    onPressed: () {
+                      WidgetsBinding.instance
+                          .addPersistentFrameCallback((timeStamp) {
+                        _scrollController.animateTo(
+                            _scrollController.position.minScrollExtent,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeInOut);
+                      });
+                    }),
+                FloatingActionButton(
+                    child: const Icon(Icons.arrow_downward),
+                    onPressed: () {
+                      WidgetsBinding.instance
+                          .addPersistentFrameCallback((timeStamp) {
+                        _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeInOut);
+                      });
+                    }),
+              ],
+            ),
           );
         },
       ),
