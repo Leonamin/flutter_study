@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sliver_app_bar/tab_bar_delegate.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -190,21 +191,51 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
     );
   }
 
+  _tabBar() {
+    return SliverPersistentHeader(
+      delegate: TabBarDelegate(tabcontroller: _tabController!, tabs: [
+        Tab(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            color: Colors.white,
+            child: const Text("게시글"),
+          ),
+        ),
+        Tab(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            color: Colors.white,
+            child: const Text("댓글"),
+          ),
+        ),
+      ]),
+      pinned: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
           controller: _scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [_appBar()];
+            return [
+              _appBar(),
+              _tabBar(),
+            ];
           },
           body: CustomScrollView(
             scrollBehavior: const ScrollBehavior(),
             slivers: [
               SliverFillRemaining(
-                child: Container(
-                  color: Colors.amber,
-                ),
+                child: TabBarView(controller: _tabController, children: [
+                  Container(
+                    color: Colors.amber,
+                  ),
+                  Container(
+                    color: Colors.lime,
+                  )
+                ]),
               ),
               // SliverList(
               //   delegate: SliverChildBuilderDelegate(

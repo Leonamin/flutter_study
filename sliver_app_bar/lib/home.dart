@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sliver_app_bar/UserScreen.dart';
 import 'package:sliver_app_bar/my_custom_sliver_appbar.dart';
+import 'package:sliver_app_bar/refresh_indicator.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -19,12 +21,14 @@ class Home extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                text,
-                style: const TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold),
+              Flexible(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
               Icon(Icons.arrow_forward_ios)
             ],
@@ -40,6 +44,9 @@ class Home extends StatelessWidget {
         body: ListView(
       children: [
         _makeCard(context, "CustomSliver", MyCustomSliverAppBar()),
+        _makeCard(context, "UserScreen", UserScreen()),
+        _makeCard(
+            context, "RefreshIndicatorExample", RefreshIndicatorExample()),
       ],
     ));
   }
