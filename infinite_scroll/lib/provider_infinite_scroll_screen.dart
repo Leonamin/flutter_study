@@ -111,8 +111,14 @@ class _ProviderInfiniteScrollScreenState
                 FloatingActionButton(
                     child: const Icon(Icons.arrow_upward),
                     onPressed: () {
-                      WidgetsBinding.instance
-                          .addPersistentFrameCallback((timeStamp) {
+                      // WidgetsBinding.instance
+                      //     .addPersistentFrameCallback((timeStamp) {
+                      //   _scrollController.animateTo(
+                      //       _scrollController.position.minScrollExtent,
+                      //       duration: const Duration(milliseconds: 100),
+                      //       curve: Curves.easeInOut);
+                      // });
+                      setState(() {
                         _scrollController.animateTo(
                             _scrollController.position.minScrollExtent,
                             duration: const Duration(milliseconds: 100),
