@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sliver_app_bar/ajax_provider.dart';
 import 'package:sliver_app_bar/tab_bar_delegate.dart';
 
 class UserScreen extends StatefulWidget {
@@ -44,46 +45,6 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
     _scrollController?.dispose();
     super.dispose();
   }
-
-  /*
-  _tabBar() {
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: _SliverAppBarDelegate(
-        minHeight: 90,
-        maxHeight: 90,
-        child: Container(
-          color: Colors.green[200],
-          child: TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(
-                child: Text(
-                  'TITLE1',
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  'TITLE2',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  'TITLE3',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-*/
 
   _userInfoWidget() {
     return SafeArea(
@@ -213,6 +174,42 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
     );
   }
 
+  commentCountToString(int count) {
+    if (count >= 100) {
+      return "99+";
+    } else {
+      return count.toString();
+    }
+  }
+
+  _itemRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "게시글 제목",
+            style: TextStyle(color: Colors.black),
+          ),
+          TextButton(
+              onPressed: () {},
+              child: Text(
+                commentCountToString(10),
+                maxLines: 1,
+              ),
+              style: TextButton.styleFrom(
+                  minimumSize: Size(60, 60),
+                  backgroundColor: Colors.grey.withOpacity(0.2))),
+        ],
+      ),
+    );
+  }
+
+  _requestButton() {
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,31 +221,42 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
               _tabBar(),
             ];
           },
-          body: CustomScrollView(
-            scrollBehavior: const ScrollBehavior(),
-            slivers: [
-              SliverFillRemaining(
-                child: TabBarView(controller: _tabController, children: [
-                  Container(
-                    color: Colors.amber,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: CustomScrollView(
+              scrollBehavior: const ScrollBehavior(),
+              slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      print(index);
+                      if (index == 49) {
+                        return _itemRow();
+                      }
+                      return Column(
+                        children: [_itemRow(), Divider()],
+                      );
+                    },
+                    childCount: 50,
                   ),
-                  Container(
-                    color: Colors.lime,
-                  )
-                ]),
-              ),
-              // SliverList(
-              //   delegate: SliverChildBuilderDelegate(
-              //     (BuildContext context, int index) {
-              //       return Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Center(child: Text("Item: $index")),
-              //       );
-              //     },
-              //     childCount: 50,
-              //   ),
-              // ),
-            ],
+                ),
+                // SliverFillRemaining(
+                //   // 탭바 뷰 내부에는 스크롤이 되는 위젯이 들어옴.
+                //   hasScrollBody: true,
+                //   child: TabBarView(
+                //     controller: _tabController,
+                //     children: [
+                //       Container(
+                //         color: Colors.amber,
+                //       ),
+                //       Container(
+                //         color: Colors.redAccent,
+                //       ),
+                //     ],
+                //   ),
+                // )
+              ],
+            ),
           )),
     );
   }
