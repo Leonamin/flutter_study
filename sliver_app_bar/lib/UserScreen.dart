@@ -10,19 +10,77 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
-  ScrollController? _scrollController;
+  ScrollController? _mainScrollController;
+  ScrollController? _postingTabScrollController;
+  ScrollController? _commentTabScrollController;
+
   TabController? _tabController;
   bool lastStatus = true;
   double appBarHeight = 275;
 
+  // 테스트용 코드 Provider로 나중에 대체해야함
+  List<int> cachePosting = [];
+  List<int> cacheComment = [];
+
+  // 로딩
+  bool loadingPosting = false;
+  bool loadingComment = false;
+
+  // 아이템 더 있나
+  bool hasMorePosting = true;
+  bool hasMoreComment = true;
+
+  // 맨 아래로 스크롤 시 자동 요청 횟수
+  final autoRequestCount = 3;
+
+  int requestCount = 0;
+
+  _makeRequest({
+    required int? nextId,
+  }) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    //nextId 다음 20개의 값 가져오기
+    return List.generate(20, (index) => (nextId ?? 0) + index);
+  }
+
+  fetchPostings({int? nextId}) async {
+    print("dk");
+    setState(() {
+      loadingPosting = true;
+    });
+
+    final List<int> items = await _makeRequest(nextId: nextId ?? 0);
+
+    setState(() {
+      cachePosting.addAll(items);
+      loadingPosting = false;
+    });
+  }
+
+  fetchComments({int? nextId}) async {
+    setState(() {
+      loadingComment = true;
+    });
+
+    final List<int> items = await _makeRequest(nextId: nextId ?? 0);
+
+    setState(() {
+      cacheComment.addAll(items);
+      loadingComment = false;
+    });
+  }
+
+  // 여기까지 임시 테스트 요청 코드
+
   bool get _isShrink {
-    return _scrollController != null &&
-        _scrollController!.hasClients &&
-        _scrollController!.offset > (appBarHeight - kToolbarHeight);
+    return _mainScrollController != null &&
+        _mainScrollController!.hasClients &&
+        _mainScrollController!.offset > (appBarHeight - kToolbarHeight);
   }
 
   void _scrollListener() {
-    print(_scrollController!.offset);
+    print(_mainScrollController!.offset);
 
     if (_isShrink != lastStatus) {
       setState(() {
@@ -35,14 +93,26 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _scrollController = ScrollController()..addListener(_scrollListener);
+    _mainScrollController = ScrollController()..addListener(_scrollListener);
+    _postingTabScrollController = ScrollController();
+    _commentTabScrollController = ScrollController();
     _tabController = TabController(initialIndex: 0, length: 2, vsync: this);
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    fetchPostings();
+    fetchComments();
+  }
+
+  @override
   void dispose() {
-    _scrollController?.removeListener(_scrollListener);
-    _scrollController?.dispose();
+    _mainScrollController?.removeListener(_scrollListener);
+    _mainScrollController?.dispose();
+    _postingTabScrollController?.dispose();
+    _commentTabScrollController?.dispose();
     super.dispose();
   }
 
@@ -206,15 +276,75 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
     );
   }
 
-  _requestButton() {
-    return;
+  _requestButton(fetchItem, isLoading) {
+    return InkWell(
+      onTap: fetchItem,
+      child: SizedBox(
+        height: 50,
+        child: Center(
+            child: isLoading
+                ? const CircularProgressIndicator()
+                : const Text("더보기")),
+      ),
+    );
+  }
+
+  _makeListView(_controller, List cache, isLoading,
+      Function({required int nextId}) fetchItem) {
+    // 로딩 중이면서 캐시가 없음
+    if (isLoading && cache.isEmpty) {
+      return const SizedBox(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // 로딩 아닌데 캐시가 없음
+    if (!isLoading && cache.isEmpty) {
+      return const SizedBox(
+        height: 50,
+        child: Center(
+          child: Text("데이따 없음"),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      controller: _controller,
+      // +1 인 이유는 맨 마지막에 로딩 또는 더보기 버튼을 두기 위해서임
+      itemCount: cache.length + 1,
+      itemBuilder: (context, index) {
+        if (index < cache.length) {
+          // TODO 여기 PostingItem과 ChildItem을 구분할 방법이 없어서 공통사용이 힘들 수도 있음
+          return ListTile(
+              title: Text(
+            cache[index].toString(),
+          ));
+        }
+        // if (requestCount < autoRequestCount) {
+        if (true) {
+          if (!isLoading) {
+            // UI가 생성되는 시점은 스크롤로 내려서 가까워지면 생성이 되는거 같다.
+            Future.microtask(() {
+              fetchItem(nextId: index);
+            });
+            requestCount++;
+          }
+          return CircularProgressIndicator();
+        } else {
+          return _requestButton(fetchItem(nextId: index), isLoading);
+        }
+      },
+      separatorBuilder: (context, index) => const Divider(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
-          controller: _scrollController,
+          controller: _mainScrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               _appBar(),
@@ -226,35 +356,33 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
             child: CustomScrollView(
               scrollBehavior: const ScrollBehavior(),
               slivers: [
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      print(index);
-                      if (index == 49) {
-                        return _itemRow();
-                      }
-                      return Column(
-                        children: [_itemRow(), Divider()],
-                      );
-                    },
-                    childCount: 50,
-                  ),
-                ),
-                // SliverFillRemaining(
-                //   // 탭바 뷰 내부에는 스크롤이 되는 위젯이 들어옴.
-                //   hasScrollBody: true,
-                //   child: TabBarView(
-                //     controller: _tabController,
-                //     children: [
-                //       Container(
-                //         color: Colors.amber,
-                //       ),
-                //       Container(
-                //         color: Colors.redAccent,
-                //       ),
-                //     ],
+                // SliverList(
+                //   delegate: SliverChildBuilderDelegate(
+                //     (BuildContext context, int index) {
+                //       print(index);
+                //       if (index == 49) {
+                //         return _itemRow();
+                //       }
+                //       return Column(
+                //         children: [_itemRow(), Divider()],
+                //       );
+                //     },
+                //     childCount: 50,
                 //   ),
-                // )
+                // ),
+                SliverFillRemaining(
+                  // 탭바 뷰 내부에는 스크롤이 되는 위젯이 들어옴.
+                  hasScrollBody: true,
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _makeListView(_postingTabScrollController, cachePosting,
+                          loadingPosting, fetchPostings),
+                      _makeListView(_commentTabScrollController, cachePosting,
+                          loadingPosting, fetchComments),
+                    ],
+                  ),
+                )
               ],
             ),
           )),
