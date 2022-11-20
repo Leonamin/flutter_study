@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliver_app_bar/UserScreen.dart';
 import 'package:sliver_app_bar/my_custom_sliver_appbar.dart';
+import 'package:sliver_app_bar/nested_scroll_view_test.dart';
 import 'package:sliver_app_bar/refresh_indicator.dart';
 
 class Home extends StatelessWidget {
@@ -47,6 +48,7 @@ class Home extends StatelessWidget {
         _makeCard(context, "UserScreen", UserScreen()),
         _makeCard(
             context, "RefreshIndicatorExample", RefreshIndicatorExample()),
+        _makeCard(context, "NestedScrollTest", NestedScrollViewTest()),
       ],
     ));
   }
