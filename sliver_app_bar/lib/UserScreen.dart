@@ -338,6 +338,77 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
     );
   }
 
+  _makeSliverListWidget(controller, PageStorageKey<String> key, List cache,
+      isLoading, Function({required int nextId}) fetchItem) {
+    // 로딩 중이면서 캐시가 없음
+    if (isLoading && cache.isEmpty) {
+      return const SizedBox(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // 로딩 아닌데 캐시가 없음
+    if (!isLoading && cache.isEmpty) {
+      return const SizedBox(
+        height: 50,
+        child: Center(
+          child: Text("데이따 없음"),
+        ),
+      );
+    }
+
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Builder(
+        builder: (context) {
+          return CustomScrollView(
+            key: key,
+            // controller: controller,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                childCount: cache.length + 1,
+                (context, index) {
+                  if (index < cache.length) {
+                    // TODO 여기 PostingItem과 ChildItem을 구분할 방법이 없어서 공통사용이 힘들 수도 있음
+                    return ListTile(
+                        title: Text(
+                      cache[index].toString(),
+                    ));
+                  }
+                  // if (requestCount < autoRequestCount) {
+                  if (true) {
+                    if (!isLoading) {
+                      // UI가 생성되는 시점은 스크롤로 내려서 가까워지면 생성이 되는거 같다.
+                      Future.microtask(() {
+                        fetchItem(nextId: index);
+                      });
+                      requestCount++;
+                    }
+                    return const SizedBox(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    return _requestButton(fetchItem(nextId: index), isLoading);
+                  }
+                },
+              ))
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -346,44 +417,30 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               _appBar(),
-              _tabBar(),
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: _tabBar(),
+              ),
             ];
           },
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: CustomScrollView(
-              scrollBehavior: const ScrollBehavior(),
-              slivers: [
-                // SliverList(
-                //   delegate: SliverChildBuilderDelegate(
-                //     (BuildContext context, int index) {
-                //       print(index);
-                //       if (index == 49) {
-                //         return _itemRow();
-                //       }
-                //       return Column(
-                //         children: [_itemRow(), Divider()],
-                //       );
-                //     },
-                //     childCount: 50,
-                //   ),
-                // ),
-                SliverFillRemaining(
-                  // 탭바 뷰 내부에는 스크롤이 되는 위젯이 들어옴.
-                  hasScrollBody: true,
-                  child: TabBarView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _tabController,
-                    children: [
-                      _makeListView(_postingTabScrollController, "1",
-                          cachePosting, loadingPosting, fetchPostings),
-                      _makeListView(_commentTabScrollController, "2",
-                          cacheComment, loadingComment, fetchComments),
-                    ],
-                  ),
-                )
-              ],
-            ),
+          body: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _tabController,
+            children: [
+              _makeSliverListWidget(
+                  _postingTabScrollController,
+                  PageStorageKey<String>("1"),
+                  cachePosting,
+                  loadingPosting,
+                  fetchPostings),
+              _makeSliverListWidget(
+                  _commentTabScrollController,
+                  PageStorageKey<String>("2"),
+                  cacheComment,
+                  loadingComment,
+                  fetchComments),
+            ],
           )),
     );
   }
