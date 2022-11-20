@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sliver_app_bar/ajax_provider.dart';
 import 'package:sliver_app_bar/tab_bar_delegate.dart';
 
 class UserScreen extends StatefulWidget {
@@ -45,7 +44,6 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
   }
 
   fetchPostings({int? nextId}) async {
-    print("dk");
     setState(() {
       loadingPosting = true;
     });
@@ -79,9 +77,7 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
         _mainScrollController!.offset > (appBarHeight - kToolbarHeight);
   }
 
-  void _scrollListener() {
-    print(_mainScrollController!.offset);
-
+  void _mainScrollListener() {
     if (_isShrink != lastStatus) {
       setState(() {
         lastStatus = _isShrink;
@@ -93,7 +89,8 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _mainScrollController = ScrollController()..addListener(_scrollListener);
+    _mainScrollController = ScrollController()
+      ..addListener(_mainScrollListener);
     _postingTabScrollController = ScrollController();
     _commentTabScrollController = ScrollController();
     _tabController = TabController(initialIndex: 0, length: 2, vsync: this);
@@ -109,7 +106,7 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _mainScrollController?.removeListener(_scrollListener);
+    _mainScrollController?.removeListener(_mainScrollListener);
     _mainScrollController?.dispose();
     _postingTabScrollController?.dispose();
     _commentTabScrollController?.dispose();
@@ -289,7 +286,7 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
     );
   }
 
-  _makeListView(_controller, List cache, isLoading,
+  _makeListView(controller, key, List cache, isLoading,
       Function({required int nextId}) fetchItem) {
     // 로딩 중이면서 캐시가 없음
     if (isLoading && cache.isEmpty) {
@@ -311,7 +308,8 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
     }
 
     return ListView.separated(
-      controller: _controller,
+      key: PageStorageKey(key),
+      controller: controller,
       // +1 인 이유는 맨 마지막에 로딩 또는 더보기 버튼을 두기 위해서임
       itemCount: cache.length + 1,
       itemBuilder: (context, index) {
@@ -374,12 +372,13 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
                   // 탭바 뷰 내부에는 스크롤이 되는 위젯이 들어옴.
                   hasScrollBody: true,
                   child: TabBarView(
+                    physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
                     children: [
-                      _makeListView(_postingTabScrollController, cachePosting,
-                          loadingPosting, fetchPostings),
-                      _makeListView(_commentTabScrollController, cachePosting,
-                          loadingPosting, fetchComments),
+                      _makeListView(_postingTabScrollController, "1",
+                          cachePosting, loadingPosting, fetchPostings),
+                      _makeListView(_commentTabScrollController, "2",
+                          cacheComment, loadingComment, fetchComments),
                     ],
                   ),
                 )
