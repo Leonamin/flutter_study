@@ -17,6 +17,37 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: kPrimaryColor,
         backgroundColor: kBackgroundColor,
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          displaySmall: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          labelLarge: TextStyle(
+            color: Colors.white,
+          ),
+          labelMedium: TextStyle(
+            color: Colors.white,
+          ),
+          labelSmall: TextStyle(
+            color: Colors.white,
+          ),
+          headlineSmall: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          titleLarge: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.normal,
+          ),
+          titleMedium: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
       ),
       home: HomePage(),
     );
