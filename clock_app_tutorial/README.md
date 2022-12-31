@@ -1,16 +1,32 @@
-# clock_app_tutorial
+# 시계앱
+https://www.youtube.com/watch?v=HyAeZKWWuxA&list=PL3wGb9_yWsvKfjFgXntI_uxUV7R0L0Act  
+이걸 따라하고 있다.  
+CustomPainter 사용법도 깨우치고 알람앱을 어떻게 만드나 구경해보고 나중에 프로젝트 적용하자
 
-A new Flutter project.
+## 회고
+최대한 수식같은 부분은 알고리즘 문제 푼다 생각하고 스스로했다.
+### 1. CustomPainter와 좌표
+시계를 그리면서 하나 착각하고 고생했던것은 수학 그래프 좌표랑 CustomPainter의 좌표는 다르단 것이다.
 
-## Getting Started
+수학 그래프는 양수와 음수가 있고 항상 0,0이 중앙이지만 CustomPainter는 0,0이 왼쪽 상단이다.  
 
-This project is a starting point for a Flutter application.
+그렇기 때문에 중앙 좌표로 보정을 하려면 x좌표는 중앙 좌표를 더해야하고 y 좌표는 증가할 때 CustomPainter 상으로는 아래로 향하기 때문에 중앙좌표 - Y좌표를 해줘야 보정이 된다.   
 
-A few resources to get you started if this is your first Flutter project:
+시간의 흐름과 각도의 증가 방향은 반대이므로 시간이 흐르면 각도를 양의 증가가 아닌 음의 증가로 해주어야한다.  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+또한 시초선의 방향은 3시방향이므로 이것도 90도를 더해서 보정해주는 수식을 넣어야한다.  
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
++ 강의 영상 해결법  
+그냥 위젯 자체를 90도로 돌려버리더라.
+
+
+### 2. Ticker
+Flutter는 내부적으로 화면 렌더링을 위한 스케줄러를 가지고 있는데 이 스케줄러는 일반적으로 60FPS로 동작한다.  
+
+화면의 상태가 변할 경우(예시: setState()를 쓰는 경우) UI에 변경점이 필요로 하면 다음 스케줄 프레임에 적용을 하게된다.(30 프레임에서 상태가 변하면 31프레임에서 변경을 한다는 소리겠지?)  
+
+이때 바로 Ticker가 그 스케줄러를 가져와서 사용하는 것이다!
+
+자세한 내용
+- https://origogi.github.io/flutter/Flutter_Internals-1/
+- https://codewithandrea.com/articles/flutter-timer-vs-ticker/

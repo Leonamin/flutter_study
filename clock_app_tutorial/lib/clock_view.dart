@@ -33,6 +33,11 @@ class _ClockViewState extends State<ClockView>
       width: 300,
       height: 300,
       child: CustomPaint(painter: ClockPainter(dateTime: datetime)),
+      // 강의 영상에 알려준방식
+      // 이러면 90도 보정을 안해도 된다.
+      // child: Transform.rotate(
+      //     angle: -pi / 2,
+      //     child: CustomPaint(painter: ClockPainter(dateTime: datetime))),
     );
   }
 }
@@ -99,20 +104,18 @@ class ClockPainter extends CustomPainter {
   0,0, N,0
   0,N  N,N
   */
-  final secDegree = 6;
-  final minDegree = 6;
-  final hourDegree = 30;
+  final secDegree = 6.0;
+  final minDegree = 6.0;
+  final hourDegree = 30.0;
 
-  double get radian => 180 / pi;
-  double degreeToRadian(int degree) => degree * pi / 180;
-
-  Offset _timeOffset(
-      double centerX, double centerY, int len, int degree, int time) {
+  Offset _timeOffset(double centerX, double centerY, int len, double degree) {
     //     final degree = timeDrgree * time - 90;
     // final dx = center + len * cos(degree * radian);
     // final dy = center + len * sin(degree * radian);
-    final x = len * cos(degreeToRadian(-(degree * time) + 90));
-    final y = len * sin(degreeToRadian(-(degree * time) + 90));
+    // 위젯 자체를 rotate 해버리면 90은 없애도 된다.
+    // -degree는 음의 방향 증가가 시계 방향이라서 남겨야함
+    final x = len * cos((90 - degree) * pi / 180);
+    final y = len * sin((90 - degree) * pi / 180);
     final dx = x + centerX;
     final dy = centerY - y;
     debugPrint(
@@ -155,23 +158,42 @@ class ClockPainter extends CustomPainter {
       ..strokeWidth = 12;
 
     // LIFO 마지막으로 그린게 첫번째로 올라간다
+
     canvas.drawCircle(center, radius - 40, circleBrush);
     canvas.drawCircle(center, radius - 40, circleOutlineBrush);
 
     // 시계 바늘
     canvas.drawLine(
       center,
-      _timeOffset(centerX, centerY, 80, secDegree, dateTime.second),
+      _timeOffset(
+        centerX,
+        centerY,
+        80,
+        // 1초의 간격은 6도이며 그 1초 안에서 1000밀리초의 간격은 0.006이다
+        dateTime.second * secDegree + dateTime.millisecond * 0.006,
+      ),
       secHandBrush,
     );
     canvas.drawLine(
       center,
-      _timeOffset(centerX, centerY, 70, minDegree, dateTime.minute),
+      _timeOffset(
+        centerX,
+        centerY,
+        70,
+        // 1분의 간격은 6도이며 그 6도안에서 60초의 간격은 0.1도이다.
+        dateTime.minute * minDegree + dateTime.second * 0.1,
+      ),
       minHandBrush,
     );
     canvas.drawLine(
       center,
-      _timeOffset(centerX, centerY, 60, hourDegree, dateTime.hour % 12),
+      _timeOffset(
+        centerX,
+        centerY,
+        60,
+        // 1시간의 간격은 30도이며 그 30도안에서 60분의 간격은 0.5도이다.
+        ((dateTime.hour % 12) * hourDegree) + (dateTime.minute * 0.5),
+      ),
       hourHandBrush,
     );
 
