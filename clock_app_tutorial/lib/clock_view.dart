@@ -17,8 +17,8 @@ class _ClockViewState extends State<ClockView>
   DateTime datetime = DateTime.now();
   @override
   void initState() {
-    // TODO: implement initState
-    _ticker = this.createTicker((elapsed) {
+    super.initState();
+    _ticker = createTicker((elapsed) {
       setState(() {
         _elapsed = elapsed;
         datetime = DateTime.now();
@@ -46,36 +46,77 @@ class ClockPainter extends CustomPainter {
   즐거운 수학시간
   내 수학실력은 망했다. 삼각함수조차 제대로 응용을 못하네
 
-  360도를 시분초로 나누면 다음과 같다
-  초 - 60 360 / 60 = 6도
-  분 - 60 360 / 60 = 6도
-  시 - 12 360 / 12 = 30도
+  360˚를 시분초로 나누면 다음과 같다
+  초 - 60 360 / 60 = 6˚
+  분 - 60 360 / 60 = 6˚
+  시 - 12 360 / 12 = 30˚
 
-  sinθ = y / r
-  cosθ = x / r
+  sin(θ) = y / r
+  cos(θ) = x / r
 
+  ∴ x = cosθ * r
+  ∴ y = sinθ * r
+
+  -호도법과 60분법-
+  반지름 길이가 r인 원에서 반지름과 같은 호 AB의 각을 a˚라고 할 경우
+  360˚ : 2πr = a˚ : r
+  호의 길이r은 중심각 a˚(1rad)에 비례하므로 호의 전체 길이인 원의 둘레는 360˚가 된다. 
+  각 항을 이동하고 없애면 최종적으로
+  a˚ = 180˚ / π가 된다.
+  여기서 a˚를 1 라디안이라고 한다.
+
+  1rad = 180˚ / π 이므로 이걸 또 옆으로 옮기면
+
+
+  1˚ = π / 180 rad가 된다.
+
+  그리고 여기서 라디안은 일반적으로 생략해서 그냥 1은 180˚ / π라고 말한다.
+
+  -삼각함수로 좌표 얻기-
   여기서 r는 시계바늘의 길의가 될 것이다.
-  sinθ으로는 y좌표를, cosθ로는 x좌표를 구할 수 있다.
 
-  그리고 θ = 0일 경우 x = r y = 0이 된다.
-  즉 12시 방향이 아니라 3시 방향이다.
-  θ가 커질 수록 반시계방향으로 x,y 좌표가 변한다.
+  그리고 θ = 0일 경우 x = r y = 0이 되며 시초선은 3시 방향이다.
+
+  θ가 양의 방향으로 커질 수록 반시계방향으로 x,y 좌표가 변한다.
+
+  그렇기에 최종적으로 식은 아래와 같다
+  x = cos(θ) * r
+    = cos(a˚ * pi / 180)  * r
+  여기에서 페인터상에서 그리려면 중앙좌표 centerX를 더해야한다
+  a˚ = (현재 시간 * 초분시각도)
+  r = 시계 바늘 길이
 
   그렇다면 시간을 구하기 위해서는 일단 θ에 90을 더하고 각도를 -로 해야한다.
 
   근데 왜 90도를 -해야 정위치가 되는거지? 90도를 더해야하는거 아닌가?
 
+  + 찾아냈다.
+  수식은 맞다 하지만 이건 말그대로 수학 그래프 상에서에 얘기고 실제 flutter 환경은 왼쪽 상단이 0,0 오른쪽 하단이 N,N 좌표이다.
+  그래서 CustomPainter 좌표로 보정이 필요하다.
+  x는 증가량은 정상적으로 표시가 되지만 감소량은 음수가 되기 때문에 중앙값을 더하면 되고
+  y는 값이 증가하면 위치가 아래로 향하기 때문에 중앙값 - 구한 Y 좌표를 넣으면 된다.
+  CustomPainter 좌표
+  0,0, N,0
+  0,N  N,N
   */
   final secDegree = 6;
   final minDegree = 6;
   final hourDegree = 30;
 
-  double get radian => pi / 180;
+  double get radian => 180 / pi;
+  double degreeToRadian(int degree) => degree * pi / 180;
 
-  Offset _timeOffset(double center, int len, int timeDrgree, int time) {
-    final degree = timeDrgree * time - 90;
-    final dx = center + len * cos(degree * radian);
-    final dy = center + len * sin(degree * radian);
+  Offset _timeOffset(
+      double centerX, double centerY, int len, int degree, int time) {
+    //     final degree = timeDrgree * time - 90;
+    // final dx = center + len * cos(degree * radian);
+    // final dy = center + len * sin(degree * radian);
+    final x = len * cos(degreeToRadian(-(degree * time) + 90));
+    final y = len * sin(degreeToRadian(-(degree * time) + 90));
+    final dx = x + centerX;
+    final dy = centerY - y;
+    debugPrint(
+        "center=($centerX, $centerY), (x, y) = ($x, $y), (dx, dy)=($dx, $dy)");
     return Offset(dx, dy);
   }
 
@@ -117,30 +158,24 @@ class ClockPainter extends CustomPainter {
     canvas.drawCircle(center, radius - 40, circleBrush);
     canvas.drawCircle(center, radius - 40, circleOutlineBrush);
 
-    var secHandLen = 80;
-    var secHandX = centerX + secHandLen * sin(0 * pi / 180);
-    var secHandY = centerY + secHandLen * cos(0 * pi / 180);
-
+    // 시계 바늘
     canvas.drawLine(
       center,
-      _timeOffset(centerX, 80, secDegree, dateTime.second),
+      _timeOffset(centerX, centerY, 80, secDegree, dateTime.second),
       secHandBrush,
     );
     canvas.drawLine(
       center,
-      _timeOffset(centerX, 70, minDegree, dateTime.minute),
+      _timeOffset(centerX, centerY, 70, minDegree, dateTime.minute),
       minHandBrush,
     );
     canvas.drawLine(
       center,
-      _timeOffset(centerX, 60, hourDegree, dateTime.hour % 12),
+      _timeOffset(centerX, centerY, 60, hourDegree, dateTime.hour % 12),
       hourHandBrush,
     );
 
     canvas.drawCircle(center, 16, circleCenterFillBrush);
-
-    // canvas.drawRect(
-    //     Rect.fromCircle(center: center, radius: radius - 40), squareBrush);
   }
 
   @override
