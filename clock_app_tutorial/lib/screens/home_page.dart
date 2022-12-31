@@ -1,9 +1,10 @@
-import 'package:clock_app_tutorial/widgets/clock_view.dart';
+import 'package:clock_app_tutorial/config/route/menu_routes.dart';
+import 'package:clock_app_tutorial/screens/alarm_page.dart';
+import 'package:clock_app_tutorial/screens/clock_page.dart';
 import 'package:clock_app_tutorial/providers/menu_provider.dart';
 import 'package:clock_app_tutorial/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,116 +27,48 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
-  Widget build(BuildContext context) {
-    var now = DateTime.now();
-    var formattedTime = DateFormat('HH:mm').format(now);
-    var formattedDate = DateFormat('EEE, d MMM').format(now);
-    var timezoneString = now.timeZoneOffset.toString().split('.').first;
-    var offsetSign = '-';
-    if (!timezoneString.startsWith('-')) {
-      offsetSign = '+';
-    }
+  void dispose() {
+    // TODO: implement dispose
+    _ticker.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return ChangeNotifierProvider<MenuProvider>(
       create: (context) => MenuProvider(),
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         body: Row(
           children: [
-            // Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     _buildMenuButton(context, 'Clock', 'assets/clock_icon.png'),
-            //     _buildMenuButton(context, 'Alarm', 'assets/alarm_icon.png'),
-            //     _buildMenuButton(context, 'Timer', 'assets/timer_icon.png'),
-            //     _buildMenuButton(
-            //         context, 'Stopwatch', 'assets/stopwatch_icon.png'),
-            //   ],
-            // ),
             const SideMenu(),
             const VerticalDivider(
               color: Colors.white54,
               width: 1,
             ),
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 64,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Text(
-                        'Clock',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            formattedTime,
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                          Text(
-                            formattedDate,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      flex: 4,
-                      fit: FlexFit.tight,
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: ClockView(
-                            size: MediaQuery.of(context).size.height / 4,
-                          )),
-                    ),
-                    Flexible(
-                      flex: 2,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Timezone',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.language,
-                                color: Colors.white,
-                              ),
-                              const SizedBox(
-                                width: 16,
-                              ),
-                              Text(
-                                'UTC$offsetSign$timezoneString',
-                                style: Theme.of(context).textTheme.labelSmall,
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              child: Consumer<MenuProvider>(
+                builder: (context, provider, child) {
+                  // FIXME Ticker 관련 에러
+                  // 'package:flutter/src/widgets/framework.dart': Failed assertion: line 4519 pos 12: '_lifecycleState != _ElementLifecycle.defunct': is not true.
+                  // 중첩 네비게이션을 쓰면 사라질까?
+                  if (provider.activeItem == ClockMenuDisplayName) {
+                    return ClockPage();
+                  } else if (provider.activeItem == AlarmMenuDisplayName) {
+                    return AlarmPage();
+                  } else {
+                    return Container(
+                      child: RichText(
+                          text: TextSpan(children: [
+                        const TextSpan(text: 'Wait for update. . .\n'),
+                        TextSpan(
+                          text: provider.activeItem,
+                          style: Theme.of(context).textTheme.displayMedium,
+                        )
+                      ])),
+                    );
+                  }
+                },
               ),
             ),
           ],
