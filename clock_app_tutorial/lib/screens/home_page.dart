@@ -1,6 +1,6 @@
-import 'package:clock_app_tutorial/clock_view.dart';
-import 'package:clock_app_tutorial/menu_provider.dart';
-import 'package:clock_app_tutorial/side_menu.dart';
+import 'package:clock_app_tutorial/widgets/clock_view.dart';
+import 'package:clock_app_tutorial/providers/menu_provider.dart';
+import 'package:clock_app_tutorial/widgets/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';

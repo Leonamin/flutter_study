@@ -1,4 +1,4 @@
-import 'package:clock_app_tutorial/menu_routes.dart';
+import 'package:clock_app_tutorial/config/route/menu_routes.dart';
 import 'package:flutter/cupertino.dart';
 
 class MenuProvider extends ChangeNotifier {
