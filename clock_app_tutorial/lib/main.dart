@@ -17,14 +17,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: kPrimaryColor,
         backgroundColor: kBackgroundColor,
+        fontFamily: 'avenir',
         textTheme: const TextTheme(
           displayLarge: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
           ),
           displaySmall: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
           ),
           labelLarge: TextStyle(
             color: Colors.white,
@@ -37,7 +36,6 @@ class MyApp extends StatelessWidget {
           ),
           headlineSmall: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
           ),
           titleLarge: TextStyle(
             color: Colors.white,

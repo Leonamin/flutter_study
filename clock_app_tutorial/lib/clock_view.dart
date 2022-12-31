@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 class ClockView extends StatefulWidget {
-  const ClockView({super.key});
+  final double size;
+  ClockView({super.key, required this.size});
 
   @override
   State<ClockView> createState() => _ClockViewState();
@@ -30,8 +31,8 @@ class _ClockViewState extends State<ClockView>
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 250,
-      height: 250,
+      width: widget.size,
+      height: widget.size,
       child: CustomPaint(painter: ClockPainter(dateTime: datetime)),
       // 강의 영상에 알려준방식
       // 이러면 90도 보정을 안해도 된다.
@@ -134,29 +135,28 @@ class ClockPainter extends CustomPainter {
     // 위젯 크기가 정사각형이 아니면 항상 작은 걸로
     final radius = min(centerX, centerY);
 
-    final clockRadius = radius - 40;
+    final clockRadius = radius * 0.75;
     final clockCenterRadius = radius / 10;
-    final clockOutlineRadius = clockRadius * 0.15;
+    final clockOutlineWidth = clockRadius * 0.15;
 
     // 시계바늘
     final secHandLen = clockRadius * 0.8;
     final minHandLen = clockRadius * 0.70;
     final hourHandLen = clockRadius * 0.55;
-    const secHandWidth = 8.0;
-    const minHandWidth = 10.0;
-    const hourHandWidth = 12.0;
+    final secHandWidth = size.width / 60;
+    final minHandWidth = size.width / 40;
+    final hourHandWidth = size.width / 30;
 
-    const markerLen = 14;
     final outerCircleRadius = radius;
-    final innerCircleRadius = radius - markerLen;
-    const dashWidth = 2.0;
+    final innerCircleRadius = radius * 0.9;
+    const dashWidth = 1.0;
 
     final circleBrush = Paint()..color = const Color(0xFF444974);
 
     final circleOutlineBrush = Paint()
       ..color = const Color(0xFFEAECFF)
       ..style = PaintingStyle.stroke // 가장자리
-      ..strokeWidth = clockOutlineRadius;
+      ..strokeWidth = clockOutlineWidth;
 
     final circleCenterFillBrush = Paint()..color = const Color(0xFFEAECFF);
 
