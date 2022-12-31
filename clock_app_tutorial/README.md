@@ -30,3 +30,10 @@ Flutter는 내부적으로 화면 렌더링을 위한 스케줄러를 가지고 
 자세한 내용
 - https://origogi.github.io/flutter/Flutter_Internals-1/
 - https://codewithandrea.com/articles/flutter-timer-vs-ticker/
+
+### 3. FittedBox
+AuthScreen 예제를 할 때와 마찬가지로 덕을 좀 봤다.  
+
+적당히 MediaQuery().of().size를 나눠서 비율 얻은다음 FittedBox에 BoxFit.fitWidth를 하면 깔끔하게 제한이 가능하다.
+
+다만 Text의 fontSize가 지멋대로 널뛰기하는 것은 있으므로 이것도 어떻게 처리할지는 나중에 고민을 해야할 것이다.

@@ -15,10 +15,12 @@ class VerticalMenuItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: TextButton(
             style: TextButton.styleFrom(
-              backgroundColor:
-                  provider.isHovering(itemName) && !provider.isActive(itemName)
-                      ? const Color(0xFF2D2F60)
-                      : Colors.transparent,
+              shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.only(topRight: Radius.circular(16))),
+              backgroundColor: provider.isActive(itemName)
+                  ? const Color(0xFF2D2F60)
+                  : Colors.transparent,
             ),
             onPressed: onTap,
             onHover: (value) {
@@ -26,39 +28,51 @@ class VerticalMenuItem extends StatelessWidget {
               debugPrint("ONHOVER");
               value ? provider.onHover(itemName) : provider.onHover("");
             },
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    provider.returnIconFor(itemName),
-                    scale: 1.5,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    itemName,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall!
-                        .copyWith(fontFamily: 'avenir'),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Visibility(
-                    visible: provider.isHovering(itemName) ||
-                        provider.isActive(itemName),
-                    maintainSize: true,
-                    maintainState: true,
-                    maintainAnimation: true,
-                    // FIXME 하드코딩된 크기
-                    child: Row(
-                      children: [Container(height: 1, color: Colors.amber)],
+            // FIXME 텍스트 크기 때문에 사이즈가 제각각이다
+            // 하드코딩 없이 모든 사이즈 크기를 동일하게 하는 법 없나?
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width / 6,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        provider.returnIconFor(itemName),
+                        scale: 1.5,
+
+                        // width: 50,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                      itemName,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall!
+                          .copyWith(fontFamily: 'avenir'),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Visibility(
+                      visible: provider.isHovering(itemName) ||
+                          provider.isActive(itemName),
+                      maintainSize: true,
+                      maintainState: true,
+                      maintainAnimation: true,
+                      // FIXME 하드코딩된 크기
+                      child: Row(
+                        children: [Container(height: 1, color: Colors.amber)],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )),
         // child: InkWell(
