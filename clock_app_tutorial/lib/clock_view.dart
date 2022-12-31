@@ -30,8 +30,8 @@ class _ClockViewState extends State<ClockView>
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      height: 300,
+      width: 250,
+      height: 250,
       child: CustomPaint(painter: ClockPainter(dateTime: datetime)),
       // 강의 영상에 알려준방식
       // 이러면 90도 보정을 안해도 된다.
@@ -108,7 +108,8 @@ class ClockPainter extends CustomPainter {
   final minDegree = 6.0;
   final hourDegree = 30.0;
 
-  Offset _degreeOffset(double centerX, double centerY, int len, double degree) {
+  Offset _degreeOffset(
+      double centerX, double centerY, double len, double degree) {
     //     final degree = timeDrgree * time - 90;
     // final dx = center + len * cos(degree * radian);
     // final dy = center + len * sin(degree * radian);
@@ -125,48 +126,67 @@ class ClockPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var centerX = size.width / 2;
-    var centerY = size.height / 2;
-    var center = Offset(centerX, centerY);
+    final centerX = size.width / 2;
+    final centerY = size.height / 2;
+    final center = Offset(centerX, centerY);
+
+    // 시계 크기
     // 위젯 크기가 정사각형이 아니면 항상 작은 걸로
-    var radius = min(centerX, centerY);
+    final radius = min(centerX, centerY);
+
+    final clockRadius = radius - 40;
+    final clockCenterRadius = radius / 10;
+    final clockOutlineRadius = clockRadius * 0.15;
+
+    // 시계바늘
+    final secHandLen = clockRadius * 0.8;
+    final minHandLen = clockRadius * 0.70;
+    final hourHandLen = clockRadius * 0.55;
+    const secHandWidth = 8.0;
+    const minHandWidth = 10.0;
+    const hourHandWidth = 12.0;
+
+    const markerLen = 14;
+    final outerCircleRadius = radius;
+    final innerCircleRadius = radius - markerLen;
+    const dashWidth = 2.0;
 
     final circleBrush = Paint()..color = const Color(0xFF444974);
 
     final circleOutlineBrush = Paint()
       ..color = const Color(0xFFEAECFF)
       ..style = PaintingStyle.stroke // 가장자리
-      ..strokeWidth = 16;
+      ..strokeWidth = clockOutlineRadius;
 
     final circleCenterFillBrush = Paint()..color = const Color(0xFFEAECFF);
 
     final secHandBrush = Paint()
       ..color = Colors.orange[300]!
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 8;
+      ..strokeWidth = secHandWidth;
     final minHandBrush = Paint()
       ..shader =
           const RadialGradient(colors: [Color(0xFF748EF6), Color(0xFF77DDFF)])
               .createShader(Rect.fromCircle(center: center, radius: radius))
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 10;
+      ..strokeWidth = minHandWidth;
     final hourHandBrush = Paint()
       ..shader =
           const RadialGradient(colors: [Color(0xFFEA74AB), Color(0xFFC279FB)])
               .createShader(Rect.fromCircle(center: center, radius: radius))
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 12;
+      ..strokeWidth = hourHandWidth;
 
     final dashBrush = Paint()
       ..color = Color(0xFFEAECFF)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 2;
+      ..strokeWidth = dashWidth;
 
     // LIFO 마지막으로 그린게 첫번째로 올라간다
 
-    canvas.drawCircle(center, radius - 40, circleBrush);
-    canvas.drawCircle(center, radius - 40, circleOutlineBrush);
+    canvas.drawCircle(center, clockRadius, circleBrush);
+    canvas.drawCircle(center, clockRadius, circleOutlineBrush);
 
     // 시계 바늘
     canvas.drawLine(
@@ -174,7 +194,7 @@ class ClockPainter extends CustomPainter {
       _degreeOffset(
         centerX,
         centerY,
-        80,
+        secHandLen,
         // 1초의 간격은 6도이며 그 1초 안에서 1000밀리초의 간격은 0.006이다
         dateTime.second * secDegree + dateTime.millisecond * 0.006,
       ),
@@ -185,7 +205,7 @@ class ClockPainter extends CustomPainter {
       _degreeOffset(
         centerX,
         centerY,
-        70,
+        minHandLen,
         // 1분의 간격은 6도이며 그 6도안에서 60초의 간격은 0.1도이다.
         dateTime.minute * minDegree + dateTime.second * 0.1,
       ),
@@ -196,29 +216,23 @@ class ClockPainter extends CustomPainter {
       _degreeOffset(
         centerX,
         centerY,
-        60,
+        hourHandLen,
         // 1시간의 간격은 30도이며 그 30도안에서 60분의 간격은 0.5도이다.
         ((dateTime.hour % 12) * hourDegree) + (dateTime.minute * 0.5),
       ),
       hourHandBrush,
     );
 
-    // 14의 길이가
-    var outerCircleRadius = radius;
-    var innerCircleRadius = radius - 14;
-
     // 30개를 원형으로 그린다.
     for (int i = 0; i <= 360; i += 12) {
       canvas.drawLine(
-        _degreeOffset(
-            centerX, centerY, innerCircleRadius.toInt(), i.toDouble()),
-        _degreeOffset(
-            centerX, centerY, outerCircleRadius.toInt(), i.toDouble()),
+        _degreeOffset(centerX, centerY, innerCircleRadius, i.toDouble()),
+        _degreeOffset(centerX, centerY, outerCircleRadius, i.toDouble()),
         dashBrush,
       );
     }
 
-    canvas.drawCircle(center, 16, circleCenterFillBrush);
+    canvas.drawCircle(center, clockCenterRadius, circleCenterFillBrush);
   }
 
   @override
