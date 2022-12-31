@@ -108,7 +108,7 @@ class ClockPainter extends CustomPainter {
   final minDegree = 6.0;
   final hourDegree = 30.0;
 
-  Offset _timeOffset(double centerX, double centerY, int len, double degree) {
+  Offset _degreeOffset(double centerX, double centerY, int len, double degree) {
     //     final degree = timeDrgree * time - 90;
     // final dx = center + len * cos(degree * radian);
     // final dy = center + len * sin(degree * radian);
@@ -118,8 +118,8 @@ class ClockPainter extends CustomPainter {
     final y = len * sin((90 - degree) * pi / 180);
     final dx = x + centerX;
     final dy = centerY - y;
-    debugPrint(
-        "center=($centerX, $centerY), (x, y) = ($x, $y), (dx, dy)=($dx, $dy)");
+    // debugPrint(
+    //     "center=($centerX, $centerY), (x, y) = ($x, $y), (dx, dy)=($dx, $dy)");
     return Offset(dx, dy);
   }
 
@@ -157,6 +157,12 @@ class ClockPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 12;
 
+    final dashBrush = Paint()
+      ..color = Color(0xFFEAECFF)
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 2;
+
     // LIFO 마지막으로 그린게 첫번째로 올라간다
 
     canvas.drawCircle(center, radius - 40, circleBrush);
@@ -165,7 +171,7 @@ class ClockPainter extends CustomPainter {
     // 시계 바늘
     canvas.drawLine(
       center,
-      _timeOffset(
+      _degreeOffset(
         centerX,
         centerY,
         80,
@@ -176,7 +182,7 @@ class ClockPainter extends CustomPainter {
     );
     canvas.drawLine(
       center,
-      _timeOffset(
+      _degreeOffset(
         centerX,
         centerY,
         70,
@@ -187,7 +193,7 @@ class ClockPainter extends CustomPainter {
     );
     canvas.drawLine(
       center,
-      _timeOffset(
+      _degreeOffset(
         centerX,
         centerY,
         60,
@@ -196,6 +202,21 @@ class ClockPainter extends CustomPainter {
       ),
       hourHandBrush,
     );
+
+    // 14의 길이가
+    var outerCircleRadius = radius;
+    var innerCircleRadius = radius - 14;
+
+    // 30개를 원형으로 그린다.
+    for (int i = 0; i <= 360; i += 12) {
+      canvas.drawLine(
+        _degreeOffset(
+            centerX, centerY, innerCircleRadius.toInt(), i.toDouble()),
+        _degreeOffset(
+            centerX, centerY, outerCircleRadius.toInt(), i.toDouble()),
+        dashBrush,
+      );
+    }
 
     canvas.drawCircle(center, 16, circleCenterFillBrush);
   }
