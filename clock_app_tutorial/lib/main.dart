@@ -1,4 +1,4 @@
-import 'package:clock_app_tutorial/config/constants/constants.dart';
+import 'package:clock_app_tutorial/config/constants/theme_data.dart';
 import 'package:clock_app_tutorial/screens/home_page.dart';
 import 'package:flutter/material.dart';
 

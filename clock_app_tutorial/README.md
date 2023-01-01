@@ -37,3 +37,23 @@ AuthScreen 예제를 할 때와 마찬가지로 덕을 좀 봤다.
 적당히 MediaQuery().of().size를 나눠서 비율 얻은다음 FittedBox에 BoxFit.fitWidth를 하면 깔끔하게 제한이 가능하다.
 
 다만 Text의 fontSize가 지멋대로 널뛰기하는 것은 있으므로 이것도 어떻게 처리할지는 나중에 고민을 해야할 것이다.
+
+### 4. List 타입 하위 메소드
+Dart의 List는 정말 대단한 편의성을 가진 메소드가 있다.  
+
+기본적으로 map()으로 리스트를 이용해 위젯을 만들 때 부터 잘 써왔는데 몇가지 눈여겨 볼만한 메소드가 있었다.  
+
+- firstWhere(), lastWhere(), singleWhere()  
+이전에도 몇번 써봤는데 조건을 만족하면 나오는 것들을 가져오는 메소드다.  
+잘 기억이 안나는데 아마 null값이 나오기 때문에 non-null을 받아야하는 상황에서 어떤 라이브러리로 처리 했던 것이 기억난다.  
+
+- followedBy()  
+뒤에 새로운 iterable을 추가하는 메소드인데 위에 map()으로 위젯 만들 때 별도의 다른 모습의 위젯을 만드는 데에 응용할 수 있다.
+
+### 5. BoxShadow
+위젯 뒤에 그림자와 관련된 위젯이고 BoxDecoration의 boxShadow 옵션에 들어간다.
+대충 써보니 아래와 같았다.
+* color: 불투명할 수록 그림자도 옅어진다 
+* blurRadius: 그림자 둥근거 borderRadius 값을 더해서 굴곡처리가 된다.(직각일 때 이거조차 0이면 직각이 된다.)
+* spreadRadius: 말그래도 뿌려지는 범위
+* offset: 블러 처리가 위젯 어디서부터 할 건지 0,0이면 골고루 x, y 바꿀수록 가로 세로 표현이 바뀐다.
