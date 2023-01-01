@@ -63,4 +63,32 @@ Dart의 List는 정말 대단한 편의성을 가진 메소드가 있다.
 자식을 그냥 넣으면 빈공간이 생겨서 double.infinity로 채워주거나 크기를 맞춰주거나 해야했다.
 
 ### 7. Flutter Local Notification
-Flutter에서 로컬 알림 기능을 쓰게 해주는 라이브러리 AOS IOS MAC LINUX를 지원한다.
+Flutter에서 로컬 알림 기능을 쓰게 해주는 라이브러리 AOS IOS MAC LINUX를 지원한다.  
+
+- 설정에 대하여
+설정 자체는 13.0.0 버전에서 설명에서 간소화 시켜와서 간단하다고 했다.  
+눈 여겨 볼만한 설정은 언제나 그랬듯이 그래들 설정이고 app.gradle dependencies에 androidx.window~ 이거 안넣어서 에러 생겨서 다시 넣은 점이다.  
+iOS는 딱히 내가 테스트 할 수 있는 환경이 아니라서 설정하지 않았지만 iOS Mac OS는 Darwin~으로 통합인거 같다.
+
+- FlutterLocalNotificationsPlugin
+일단 얘의 인스턴스를 사용해서 기능을 사용하기 때문에 main 파일에서 선언해서 때려 박아놨는데 나중에 의존성 주입으로 따로 빼면 좋을 것 같기도 하다.  
+사용하기 위해서는 initialize()를 해줘야하는데 main()에서 했고 비동기 함수라서 WidgetsFlutterBinding.ensureInitialized()를 먼저 해줘야한다.  
+안드로이드는 무조건 기본 아이콘을 넣어줘야하며 '@minmpa/ic_launcher'를 넣어서 res폴더의 기본 아이콘을 쓰게 했다.  
+
+- FlutterLocalNotificationsPlugin.zonedSchedule()  
+영상에서 나오는 schedule은 iOS의 타임존 문제 때문에 deprecated되고 TimeZone의 TZDateTime을 쓰는 zonedSchedule()이 새로 나왔다.  
+zonedSchedule()은 아이디, 타이틀, 설명, 스케쥴 시간, 상세 플랫폼 설정, iOS 알림시간 설정, 안드로이드 슬립 모드 설정, payload, DateTimeComponets를 인자로 받는다.  
+스케쥴 시간은 TZDateTime을 사용해야해서 일단 뒤로 설명한다.  
+상세 플랫폼은 NotificationDetails 클래스이며 여기에 AOS Darwin Linux 설정을 넣는다.  
+android는 설정이 다양했는데 거진 NotificationCompat APIs에서 웬만한거는 지원하는 것 같다.  
+그중에서 눈여겨 볼만한 것은 fullScreenIntent로 대화면, 예를 들어 알람 발생시 알람 화면을 출력하는 기능이 있었다.  
+다만 내가 찾아본 결과 원래 안드로이드 네이티브는 슬립모드에서는 동작을 안해서 WAKE_LOCK을 걸고 화면을 켜야하는 번거로움이 있는데 여기서도 화면을 자동으로 켜줄지는 모르겠다.  
+그리고 visibility 옵션을 줘야 잠금화면에서도 제대로 출력이 될것이다.  
+iOS 알림시간은 서머타임 적용 여부를 설정해줘야한다.  
+androidAllowWhileIdle은 일단 low-power idle 모드에서 동작 여부를 설정하는 것인데 실제 동작이 어디까지 될지는 모르겠다.  
+DateTimeCompents는 알람 시간을 정확한 날짜까지 설정할 건지 여부이다.  
+그냥 설정해버리면 18일날 설정한 21일 10시 00분 알람은 19일 10시 00분에도 실행될 수 있기 때문에 달, 주, 일을 세세하게 설정할 수 있고 기본은 시분만 맞으면 실행하기로 설정한것같다.  
+
+- TimeZone
+얘를 쓰려고 좀 해맸는데 일단 TimeZone 관련 라이브러리가 그냥 쓰면 TZDateTime이 없다고 나와서 timezone/timezone.dart as tz 이런 식으로 해주고 써야 나왔었다. 
+그리고 flutter_native_timezone를 사용해서 타임존을 구했는데 나중에 추가해서 그런가 flutter clean을 실행하고 다시 빌드해야 에러가 안난다.

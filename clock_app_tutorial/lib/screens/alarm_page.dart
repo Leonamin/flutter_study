@@ -1,7 +1,11 @@
 import 'package:clock_app_tutorial/config/constants/theme_data.dart';
 import 'package:clock_app_tutorial/config/data.dart';
+import 'package:clock_app_tutorial/config/timezone.dart';
+import 'package:clock_app_tutorial/main.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class AlarmPage extends StatelessWidget {
   const AlarmPage({super.key});
@@ -122,7 +126,13 @@ class AlarmPage extends StatelessWidget {
                             BorderRadius.all(Radius.circular(cardRadius))),
                     height: 100,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        flutterLocalNotificationsPlugin
+                            .resolvePlatformSpecificImplementation<
+                                AndroidFlutterLocalNotificationsPlugin>()!
+                            .requestPermission();
+                        scheduleAlarm();
+                      },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -147,6 +157,52 @@ class AlarmPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void scheduleAlarm() async {
+    // final tz.TZDateTime scheduledTime =
+    //     tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10));
+
+    final timeZone = TimeZone();
+    // The device's timezone.
+    String timeZoneName = await timeZone.getTimeZoneName();
+
+    // Find the 'current location'
+    final location = await timeZone.getLocation(timeZoneName);
+
+    final scheduledDate =
+        tz.TZDateTime.from(DateTime.now(), location).add(Duration(seconds: 5));
+
+    const androidPlaformChannelSpecifics = AndroidNotificationDetails(
+      'alarm_notif',
+      'alarm_notif',
+      channelDescription: 'alarm!',
+      // sound: ,
+    );
+
+    const iosPlatformChannelSpecifics = DarwinNotificationDetails(
+      // sound: ,
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    var platformSpecifics = const NotificationDetails(
+        android: androidPlaformChannelSpecifics,
+        iOS: iosPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0, 'Alarm Name', 'Alarm Description', scheduledDate, platformSpecifics,
+      // 별의별 시간이 다있네
+      // 세계에는 DST(Daylight saving time 일광 절약 시간제)라는게 존재한다.
+      // wallClockTime은 벽시계시간이라는건데 사람들이 맞추는 변동 시간 이라는 의미로 작명한거 같다.
+      // 만대로 absoluteTime은 말그대로 절대시간이라서 직관적이다.
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      // low-power idle 모드에서도 동작하게 할건지 설정인데
+      // 웨이크락이 없어도 동작이 되나?
+      androidAllowWhileIdle: true,
     );
   }
 }
