@@ -1,5 +1,5 @@
+import 'package:clock_app_tutorial/config/data.dart';
 import 'package:clock_app_tutorial/providers/menu_provider.dart';
-import 'package:clock_app_tutorial/config/route/menu_routes.dart';
 import 'package:clock_app_tutorial/widgets/side_menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
