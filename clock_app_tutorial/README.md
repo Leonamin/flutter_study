@@ -61,3 +61,6 @@ Dart의 List는 정말 대단한 편의성을 가진 메소드가 있다.
 ### 6. DottedBorder
 공식이 아닌 비공식 라이브러리 이름만 보면 border 옵션으로 넣는것처럼 보이지만 별도로 사용하는 위젯이다.  
 자식을 그냥 넣으면 빈공간이 생겨서 double.infinity로 채워주거나 크기를 맞춰주거나 해야했다.
+
+### 7. Flutter Local Notification
+Flutter에서 로컬 알림 기능을 쓰게 해주는 라이브러리 AOS IOS MAC LINUX를 지원한다.
