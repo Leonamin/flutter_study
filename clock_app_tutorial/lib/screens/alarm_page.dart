@@ -1,8 +1,12 @@
+import 'package:clock_app_tutorial/config/constants/theme_data.dart';
 import 'package:clock_app_tutorial/config/data.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
 class AlarmPage extends StatelessWidget {
   const AlarmPage({super.key});
+
+  static const double cardRadius = 24;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,7 @@ class AlarmPage extends StatelessWidget {
           ),
           Expanded(
             child: ListView(
-              children: alarms.map((alarm) {
+              children: alarms.map<Widget>((alarm) {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 32),
                   padding:
@@ -30,7 +34,7 @@ class AlarmPage extends StatelessWidget {
                       end: Alignment.centerRight,
                     ),
                     borderRadius: const BorderRadius.all(
-                      Radius.circular(24),
+                      Radius.circular(cardRadius),
                     ),
                     boxShadow: [
                       /**
@@ -97,7 +101,48 @@ class AlarmPage extends StatelessWidget {
                     ],
                   ),
                 );
-              }).toList(),
+              }).followedBy([
+                // DottedBorder가 Conatiner 타입으로 지정될 수 없다는 에러가 뜬다.
+                // map에 Widget을 추가하면 해결
+                // dashPattern 구성 원리
+                // 홀: Dash, 짝: 빈칸
+                // 3, 4 = 3개의 Dash 4개의 빈칸
+                // 3, 5, 1, 10, = 3개의 Dash 5개의 빈칸 1개의 Dash 10개의 빈칸
+                DottedBorder(
+                  strokeWidth: 3,
+                  color: CustomColors.clockOutline,
+                  borderType: BorderType.RRect,
+                  radius: const Radius.circular(cardRadius),
+                  dashPattern: const [5, 10, 0],
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: CustomColors.clockBG,
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(cardRadius))),
+                    height: 100,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/add_alarm.png',
+                            scale: 1.5,
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            'Add Alarm',
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ]).toList(),
             ),
           ),
         ],
