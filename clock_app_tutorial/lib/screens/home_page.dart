@@ -1,5 +1,5 @@
 import 'package:clock_app_tutorial/config/route/menu_routes.dart';
-import 'package:clock_app_tutorial/screens/alarm_page.dart';
+import 'package:clock_app_tutorial/screens/alarm/alarm_screen.dart';
 import 'package:clock_app_tutorial/screens/clock_page.dart';
 import 'package:clock_app_tutorial/providers/menu_provider.dart';
 import 'package:clock_app_tutorial/widgets/side_menu.dart';

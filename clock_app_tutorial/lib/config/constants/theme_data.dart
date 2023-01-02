@@ -31,7 +31,7 @@ class GradientColors {
 }
 
 class GradientTemplate {
-  static List<GradientColors> gradientTemplate = [
+  static final List<GradientColors> gradientTemplate = [
     GradientColors(GradientColors.sky),
     GradientColors(GradientColors.sunset),
     GradientColors(GradientColors.sea),
