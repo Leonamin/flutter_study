@@ -5,7 +5,7 @@ import 'package:flutter/scheduler.dart';
 
 class ClockView extends StatefulWidget {
   final double size;
-  ClockView({super.key, required this.size});
+  const ClockView({super.key, required this.size});
 
   @override
   State<ClockView> createState() => _ClockViewState();
@@ -14,18 +14,20 @@ class ClockView extends StatefulWidget {
 class _ClockViewState extends State<ClockView>
     with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
-  Duration _elapsed = Duration.zero;
-  DateTime datetime = DateTime.now();
   @override
   void initState() {
     super.initState();
     _ticker = createTicker((elapsed) {
-      setState(() {
-        _elapsed = elapsed;
-        datetime = DateTime.now();
-      });
+      setState(() {});
     });
     _ticker.start();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _ticker.dispose();
+    super.dispose();
   }
 
   @override
@@ -33,7 +35,7 @@ class _ClockViewState extends State<ClockView>
     return Container(
       width: widget.size,
       height: widget.size,
-      child: CustomPaint(painter: ClockPainter(dateTime: datetime)),
+      child: CustomPaint(painter: ClockPainter(dateTime: DateTime.now())),
       // 강의 영상에 알려준방식
       // 이러면 90도 보정을 안해도 된다.
       // child: Transform.rotate(
