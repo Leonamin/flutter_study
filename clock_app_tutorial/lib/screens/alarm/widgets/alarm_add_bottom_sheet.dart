@@ -1,3 +1,4 @@
+import 'package:clock_app_tutorial/config/timezone.dart';
 import 'package:clock_app_tutorial/helpers/alarm_helper.dart';
 import 'package:clock_app_tutorial/main.dart';
 import 'package:clock_app_tutorial/models/alarm_info.dart';
@@ -18,7 +19,7 @@ class AlarmAddBottomSheet extends StatefulWidget {
 class _AlarmAddBottomSheetState extends State<AlarmAddBottomSheet> {
   final AlarmHelper _alarmHelper = AlarmHelper();
 
-  late DateTime _alarmTime = DateTime.now();
+  DateTime _alarmTime = DateTime.now();
 
   late String _alarmTimeString;
 
@@ -62,11 +63,19 @@ class _AlarmAddBottomSheetState extends State<AlarmAddBottomSheet> {
                 },
                 child: Text(
                   _alarmTimeString,
-                  style: const TextStyle(fontSize: 32),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(color: Colors.black),
                 ),
               ),
               ListTile(
-                title: const Text('Repeat'),
+                title: Text(
+                  'Repeat',
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Colors.black,
+                      ),
+                ),
                 trailing: Switch(
                   onChanged: (value) {
                     setModalState(() {
@@ -76,13 +85,23 @@ class _AlarmAddBottomSheetState extends State<AlarmAddBottomSheet> {
                   value: _isRepeatSelected,
                 ),
               ),
-              const ListTile(
-                title: Text('Sound'),
+              ListTile(
+                title: Text(
+                  'Sound',
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Colors.black,
+                      ),
+                ),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
-              const ListTile(
-                title: Text('Title'),
-                trailing: Icon(Icons.arrow_forward_ios),
+              ListTile(
+                title: Text(
+                  'Title',
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Colors.black,
+                      ),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios),
               ),
               FloatingActionButton.extended(
                 onPressed: () {
@@ -90,7 +109,12 @@ class _AlarmAddBottomSheetState extends State<AlarmAddBottomSheet> {
                   widget.onPressed!();
                 },
                 icon: const Icon(Icons.alarm),
-                label: const Text('Save'),
+                label: Text(
+                  'Save',
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Colors.black,
+                      ),
+                ),
               ),
             ],
           ),
@@ -121,13 +145,20 @@ class _AlarmAddBottomSheetState extends State<AlarmAddBottomSheet> {
         android: androidPlaformChannelSpecifics,
         iOS: iosPlatformChannelSpecifics);
 
+    final timeZone = TimeZone();
+    // The device's timezone.
+    String timeZoneName = await timeZone.getTimeZoneName();
+
+    // Find the 'current location'
+    final location = await timeZone.getLocation(timeZoneName);
+
     // 매일 반복
     if (isRepeating) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'Office',
         alarmInfo.title,
-        tz.TZDateTime.from(scheduledNotificationDateTime, tz.local),
+        tz.TZDateTime.from(scheduledNotificationDateTime, location),
         platformSpecifics,
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
@@ -151,10 +182,11 @@ class _AlarmAddBottomSheetState extends State<AlarmAddBottomSheet> {
 
   void onSaveAlarm(bool _isRepeating) {
     DateTime? scheduleAlarmDateTime;
-    if (_alarmTime.isAfter(DateTime.now()))
+    if (_alarmTime.isAfter(DateTime.now())) {
       scheduleAlarmDateTime = _alarmTime;
-    else
-      scheduleAlarmDateTime = _alarmTime.add(Duration(days: 1));
+    } else {
+      scheduleAlarmDateTime = _alarmTime.add(const Duration(days: 1));
+    }
 
     var alarmInfo = AlarmInfo(
       alarmDateTime: scheduleAlarmDateTime,
