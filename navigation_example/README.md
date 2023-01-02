@@ -42,3 +42,8 @@ MaterialPage를 설정할 때 중복 없는 키를 꼭 넣어 주어야 프레�
 예제 상에서는 ValueKey를 사용했는데 만약 ValueKey로 사용하는 인자가 중복 가능성이 있다면 맘편히 UniqueKey를 사용하자.  
 
 MaterialApp의 home에 Navigator() 위젯을 넣고 pages를 넣어서 변수 상태 변경 조건을 넣고 돌리면 페이지는 바뀐다! 다만 URL을 사용해서 페이지 변경을 하는 부분은 아직이다.
+
+#### Router
+Navigator, Page 이것만으로 화면 전환은 완료되었다 하지만 아직 브라우저의 URL을 업데이트 하는부분은 만들어지지 않았다.  
+
+RouteInformationParser와 RouterDelegate를 사용하면 브라우저의 URL과 앱의 상태를 동기화 할 수 있다.
