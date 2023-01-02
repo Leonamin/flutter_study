@@ -24,7 +24,6 @@ class _AlarmPageState extends State<AlarmPage> {
       debugPrint('-------------database initialized--------------');
       loadAlarms();
     });
-    _alarmHelper.getAlarms();
     super.initState();
   }
 

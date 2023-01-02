@@ -92,3 +92,9 @@ DateTimeCompents는 알람 시간을 정확한 날짜까지 설정할 건지 여
 - TimeZone
 얘를 쓰려고 좀 해맸는데 일단 TimeZone 관련 라이브러리가 그냥 쓰면 TZDateTime이 없다고 나와서 timezone/timezone.dart as tz 이런 식으로 해주고 써야 나왔었다. 
 그리고 flutter_native_timezone를 사용해서 타임존을 구했는데 나중에 추가해서 그런가 flutter clean을 실행하고 다시 빌드해야 에러가 안난다.
+
+### 8. sqflite
+플러터에서 SQLite를 쓰게 해주는 라이브러리 SQL 문법을 직접 타이핑해야하기 때문에 SQL 문법을 알아야한다.  
+
+위 영상 강좌에서는 PRIMARY KEY 뒤에 AUTUINCREMENT를 추가로 붙였는데 SQLite는 autuincrement를 이미 하기 때문에 안붙여도 된다.  
+그리고 마지막 인자는 ,를 붙이면 문법 에러가 난다.

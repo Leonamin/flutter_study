@@ -1,5 +1,6 @@
 import 'package:clock_app_tutorial/models/alarm_info.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 const String tableAlarm = 'alarm';
 const String columnId = 'id';
@@ -23,20 +24,21 @@ class AlarmHelper {
   }
 
   Future<Database> initializeDatabase() async {
-    final dir = await getDatabasesPath();
-    final path = "${dir}alarm.db";
+    final path = join(await getDatabasesPath(), 'alarm.db');
 
     final database = await openDatabase(
       path,
       version: 1,
-      onCreate: (db, version) {
-        db.execute('''
-          create table $tableAlarm (
-            $columnId integer primary key autuincrement,
+      // SQL 문법에서 마지막 줄은 ,가 있으면 안된다.
+      //
+      onCreate: (db, version) async {
+        await db.execute('''
+          create table $tableAlarm(
+            $columnId integer primary key,
             $columnTitle text not null,
             $columnDateTime text not null,
             $columnPending integer,
-            $columnColorIndex integer,
+            $columnColorIndex integer
             )
         ''');
       },
@@ -48,7 +50,11 @@ class AlarmHelper {
   void insertAlarm(AlarmInfo alarmInfo) async {
     final db = await database;
 
-    await db.insert(tableAlarm, alarmInfo.toJson());
+    await db.insert(
+      tableAlarm,
+      alarmInfo.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<List<AlarmInfo>> getAlarms() async {

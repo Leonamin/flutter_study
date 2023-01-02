@@ -1,6 +1,7 @@
 import 'package:clock_app_tutorial/config/constants/theme_data.dart';
 import 'package:clock_app_tutorial/models/alarm_info.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AlarmCard extends StatelessWidget {
   final AlarmInfo alarmInfo;
@@ -57,7 +58,7 @@ class AlarmCard extends StatelessWidget {
                     width: 8,
                   ),
                   Text(
-                    'Example',
+                    alarmInfo.title ?? "",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ],
@@ -77,7 +78,7 @@ class AlarmCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '08:00 AM',
+                DateFormat("HH:mm").format(alarmInfo.alarmDateTime),
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               const Icon(
