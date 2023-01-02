@@ -5,7 +5,14 @@ import 'package:intl/intl.dart';
 
 class AlarmCard extends StatelessWidget {
   final AlarmInfo alarmInfo;
-  const AlarmCard({super.key, required this.alarmInfo});
+  final Function(bool value)? onChangePreseed;
+  final Function()? onDeletePressed;
+  const AlarmCard({
+    super.key,
+    required this.alarmInfo,
+    this.onChangePreseed,
+    this.onDeletePressed,
+  });
 
   static const double cardRadius = 24;
 
@@ -81,10 +88,13 @@ class AlarmCard extends StatelessWidget {
                 DateFormat("HH:mm").format(alarmInfo.alarmDateTime),
                 style: Theme.of(context).textTheme.labelLarge,
               ),
-              const Icon(
-                Icons.arrow_drop_down_outlined,
-                size: 36,
-                color: Colors.white,
+              IconButton(
+                onPressed: onDeletePressed,
+                icon: const Icon(
+                  Icons.delete_outlined,
+                  size: 24,
+                  color: Colors.white,
+                ),
               )
             ],
           ),

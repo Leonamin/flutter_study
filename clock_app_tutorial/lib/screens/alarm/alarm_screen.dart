@@ -40,6 +40,7 @@ class _AlarmPageState extends State<AlarmPage> {
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           Expanded(
+            // AnimatedList를 어떻게 하면 쓸 수 있을까.
             child: ListView.builder(
               itemCount: _alarms != null ? _alarms!.length + 1 : 1,
               itemBuilder: (context, index) {
@@ -48,7 +49,12 @@ class _AlarmPageState extends State<AlarmPage> {
                     onPressed: loadAlarms,
                   );
                 }
-                return AlarmCard(alarmInfo: _alarms![index]);
+                return AlarmCard(
+                  alarmInfo: _alarms![index],
+                  onDeletePressed: () {
+                    deleteAlarm(_alarms![index].id);
+                  },
+                );
               },
             ),
           )
@@ -62,8 +68,8 @@ class _AlarmPageState extends State<AlarmPage> {
   }
 
   void deleteAlarm(int? id) {
-    // _alarmHelper.delete(id);
+    _alarmHelper.delete(id);
     //unsubscribe for notification
-    // loadAlarms();
+    loadAlarms();
   }
 }
