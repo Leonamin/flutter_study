@@ -11,9 +11,17 @@ class HomePage extends StatelessWidget {
         title: const Text("Home!"),
       ),
       body: Center(
-        child: OutlinedButton(
-          onPressed: () => context.go("/settings"),
-          child: Text("어디로 가야하오?"),
+        child: Column(
+          children: [
+            OutlinedButton(
+              onPressed: () => context.go("/settings/cute"),
+              child: Text("세팅으로 가자!"),
+            ),
+            OutlinedButton(
+              onPressed: () => context.go("/all_new_all_different"),
+              child: Text("새롭고 다른 으로가자!"),
+            ),
+          ],
         ),
       ),
     );
