@@ -14,7 +14,13 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: [
             OutlinedButton(
-              onPressed: () => context.go("/settings/cute"),
+              onPressed: () => context.goNamed("settings", params: {
+                "name": "cute"
+              }, queryParams: {
+                "email": "example@gmail.com",
+                "age": "25",
+                "place": "India"
+              }),
               child: Text("세팅으로 가자!"),
             ),
             OutlinedButton(

@@ -28,15 +28,24 @@ void main() {
 final GoRouter _subRouter = GoRouter(
   routes: [
     GoRoute(
+      name: 'home',
       path: '/',
       builder: (context, state) => const HomePage(),
       routes: [
         GoRoute(
-          path: 'settings/:name',
-          builder: (context, state) => SettingsPage(
-            name: state.params['name']!,
-          ),
-        ),
+            name: 'settings',
+            path: 'settings/:name',
+            builder: (context, state) {
+              // 쿼리 파람 얻기!
+              state.queryParams.forEach(
+                (key, value) {
+                  print("$key:$value");
+                },
+              );
+              return SettingsPage(
+                name: state.params['name']!,
+              );
+            }),
         GoRoute(
           path: 'all_new_all_different',
           builder: (context, state) => AllNewAllDifferentPage(),
