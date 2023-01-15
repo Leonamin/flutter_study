@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutorial_go_router/all_new_all_different_page.dart';
+import 'package:tutorial_go_router/error_page.dart';
 import 'package:tutorial_go_router/home_page.dart';
 import 'package:tutorial_go_router/house_of_m_page.dart';
 import 'package:tutorial_go_router/settings_page.dart';
@@ -33,19 +34,20 @@ final GoRouter _subRouter = GoRouter(
       builder: (context, state) => const HomePage(),
       routes: [
         GoRoute(
-            name: 'settings',
-            path: 'settings/:name',
-            builder: (context, state) {
-              // 쿼리 파람 얻기!
-              state.queryParams.forEach(
-                (key, value) {
-                  print("$key:$value");
-                },
-              );
-              return SettingsPage(
-                name: state.params['name']!,
-              );
-            }),
+          name: 'settings',
+          path: 'settings/:name',
+          builder: (context, state) {
+            // 쿼리 파람 얻기!
+            state.queryParams.forEach(
+              (key, value) {
+                print("$key:$value");
+              },
+            );
+            return SettingsPage(
+              name: state.params['name']!,
+            );
+          },
+        ),
         GoRoute(
           path: 'all_new_all_different',
           builder: (context, state) => AllNewAllDifferentPage(),
@@ -59,6 +61,7 @@ final GoRouter _subRouter = GoRouter(
       ],
     ),
   ],
+  errorBuilder: (context, state) => const ErrorPage(),
 );
 
 class MyApp extends StatelessWidget {
