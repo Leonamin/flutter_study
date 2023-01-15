@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:tutorial_go_router/login_notifier.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -26,6 +28,10 @@ class HomePage extends StatelessWidget {
             OutlinedButton(
               onPressed: () => context.go("/all_new_all_different"),
               child: Text("새롭고 다른 으로가자!"),
+            ),
+            OutlinedButton(
+              onPressed: () => context.read<LoginNotifier>().logout(),
+              child: Text("록 아웃!"),
             ),
           ],
         ),

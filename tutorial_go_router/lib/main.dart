@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutorial_go_router/all_new_all_different_page.dart';
 import 'package:tutorial_go_router/error_page.dart';
+import 'package:tutorial_go_router/go_router_app.dart';
 import 'package:tutorial_go_router/home_page.dart';
 import 'package:tutorial_go_router/house_of_m_page.dart';
 import 'package:tutorial_go_router/settings_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(GoRouterApp());
 }
 
 // 기본적인 go router routes
